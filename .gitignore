@@ -1,0 +1,48 @@
+# Android Studio
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Kotlin specific
+*.kotlin_module
+
+# Log/OS/Environment
+*.log
+*.swp
+*.swo
+*.DS_Store
+*.class
+
+# IntelliJ
+out/
+
+# Keystore files (if present)
+*.jks
+*.keystore
+
+# NDK / CMake / Cache
+.cxx/
+.externalNativeBuild/
+
+# Crashlytics / Firebase
+crashlytics-build.properties
+fabric.properties
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+
+# Misc
+captures/
+output.json

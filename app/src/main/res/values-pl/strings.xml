@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">KKBN</string>
+    <string name="app_subtitle">52. KKBN</string>
+    <string name="app_description">52. KRAJOWA KONFERENCJA BADAŃ NIENISZCZĄCYCH</string>
+
+    <string name="title_agenda">Agenda</string>
+    <string name="title_news">Aktualności</string>
+    <string name="title_committee">Komitet naukowy"</string>
+    <string name="title_partners">Partnerzy"</string>
+    <string name="title_exhibitors">Wystawcy"</string>
+    <string name="title_place">Miejsce"</string>
+    <string name="title_contacts">Kontakty"</string>
+    <string name="title_downloads">Materiały"</string>
+    <string name="title_login">Logowanie</string>
+
+    <string name="visit_partner_site">Odwiedź stronę partnera</string>
+    <string name="visit_exhibitor_site">Odwiedź stronę wystawcy</string>
+    <string name="choose_date">Wybierz datę</string>
+    <string name="label_host">Prowadzący: </string>
+    <string name="available_places">Dostępne miejsca: </string>
+    <string name="sign_up">Zapisz się</string>
+    <string name="operation_unavailable">Nie można wykonać tej operacji</string>
+    <string name="email_address">E-mail</string>
+    <string name="code_token">Kod</string>
+    <string name="login">Zaloguj</string>
+    <string name="auth_error">Wystąpił błąd podczas autentykacji</string>
+    <string name="logged_in">Zalogowano</string>
+</resources>

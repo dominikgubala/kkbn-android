@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">KKBN</string>
+    <string name="app_subtitle">52nd KKBN</string>
+    <string name="app_description">52nd NATIONAL CONFERENCE ON NON-DESTRUCTIVE TESTING</string>
+
+    <string name="title_agenda">Agenda</string>
+    <string name="title_news">News</string>
+    <string name="title_committee">Scientific Committee</string>
+    <string name="title_partners">Partners</string>
+    <string name="title_exhibitors">Exhibitors</string>
+    <string name="title_place">Place</string>
+    <string name="title_contacts">Contacts</string>
+    <string name="title_downloads">Downloads</string>
+    <string name="title_login">Login</string>
+
+    <string name="visit_partner_site">Visit the partner site</string>
+    <string name="visit_exhibitor_site">Visit the exhibitor site</string>
+    <string name="choose_date">Choose a date</string>
+    <string name="label_host">Host: </string>
+    <string name="available_places">Available places: </string>
+    <string name="sign_up">Sign up</string>
+    <string name="operation_unavailable">Cannot perform this operation</string>
+    <string name="email_address">E-mail</string>
+    <string name="code_token">Code</string>
+    <string name="login">Login</string>
+    <string name="auth_error">An error occurred during authentication</string>
+    <string name="logged_in">Logged in</string>
+</resources>
