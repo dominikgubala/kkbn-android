@@ -28,8 +28,8 @@ import pl.directsoftware.kkbn.common.Route
 import pl.directsoftware.kkbn.repository.ExhibitorRepository
 
 @Composable
-fun ExhibitorsScreen(navController: NavController, repository: ExhibitorRepository) {
-    val exhibitors = repository.getExhibitors()
+fun ExhibitorsScreen(navController: NavController) {
+    val exhibitors = ExhibitorRepository.getExhibitors()
 
     LazyColumn(
         modifier = Modifier

@@ -5,7 +5,9 @@ import pl.directsoftware.kkbn.api.data.Contact
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
 
-class ContactRepository : AbstractRepository() {
+object ContactRepository : AbstractRepository() {
+
+    private val logger = Logger(ContactRepository::class.java.simpleName)
 
     fun getContacts(): List<Contact>? {
         val downloads = runBlocking { service.getContacts() }
@@ -15,10 +17,5 @@ class ContactRepository : AbstractRepository() {
         }
 
         return downloads.data
-    }
-
-    companion object {
-
-        private val logger = Logger(ContactRepository::class.java.simpleName)
     }
 }

@@ -27,11 +27,8 @@ import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.repository.DownloadRepository
 
 @Composable
-fun DownloadsScreen(
-    navController: NavController,
-    repository: DownloadRepository,
-) {
-    val downloads = repository.getDownloads()
+fun DownloadsScreen() {
+    val downloads = DownloadRepository.getDownloads()
     if (downloads != null) {
         val context = LocalContext.current
         LazyColumn {

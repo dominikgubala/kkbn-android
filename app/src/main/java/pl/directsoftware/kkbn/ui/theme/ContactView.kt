@@ -32,11 +32,8 @@ import androidx.navigation.NavController
 import pl.directsoftware.kkbn.repository.ContactRepository
 
 @Composable
-fun ContactScreen(
-    navController: NavController,
-    repository: ContactRepository,
-) {
-    val contacts = repository.getContacts()
+fun ContactScreen() {
+    val contacts = ContactRepository.getContacts()
     val context = LocalContext.current
     if (contacts != null) {
         LazyColumn {

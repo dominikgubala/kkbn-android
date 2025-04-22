@@ -1,6 +1,5 @@
 package pl.directsoftware.kkbn.ui.theme
 
-import android.text.Html
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,15 +27,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil3.compose.AsyncImage
+import pl.directsoftware.kkbn.AppViewModel
 import pl.directsoftware.kkbn.api.data.News
 import pl.directsoftware.kkbn.common.HtmlData
 import pl.directsoftware.kkbn.common.Route
@@ -44,12 +40,15 @@ import pl.directsoftware.kkbn.repository.NewsRepository
 import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 
 @Composable
-fun NewsScreen(navController: NavController) {
+fun NewsScreen(
+    viewModel: AppViewModel,
+    navController: NavController
+) {
     val isLoading = remember { mutableStateOf(true) }
     val newsList = remember { mutableStateOf<List<News>?>(null) }
 
     LaunchedEffect(NewsRepository::class) {
-        newsList.value = NewsRepository.getNews()
+        newsList.value = viewModel.getNews()
         isLoading.value = false
     }
 
@@ -73,32 +72,16 @@ fun NewsScreen(navController: NavController) {
                             .clickable(
                                 onClick = { navController.navigate(Route.NEWS_BY_ID.setId(news.id)) }
                             )
-//                        .drawBehind {
-//                            val strokeWidth = 1.dp.toPx()
-//                            drawLine(
-//                                color = Color.Gray,
-//                                start = androidx.compose.ui.geometry.Offset(
-//                                    0f,
-//                                    size.height - strokeWidth / 2
-//                                ),
-//                                end = androidx.compose.ui.geometry.Offset(
-//                                    size.width,
-//                                    size.height - strokeWidth / 2
-//                                ),
-//                                strokeWidth = strokeWidth
-//                            )
-//                        }
                         ,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AsyncImage(
+                        NetworkImage(
+                            image = news.bitmap,
                             modifier = Modifier
                                 .width(90.dp)
                                 .height(90.dp)
                                 .padding(4.dp)
-                            ,
-                            model = "https://kkbn.pl/${news.imagePath}",
-                            contentDescription = null)
+                        )
                         Text(
                             text = news.title,
                             style = TextStyle(

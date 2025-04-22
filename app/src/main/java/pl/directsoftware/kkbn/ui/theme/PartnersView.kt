@@ -28,8 +28,8 @@ import pl.directsoftware.kkbn.common.Route
 import pl.directsoftware.kkbn.repository.PartnerRepository
 
 @Composable
-fun PartnersScreen(navController: NavController, repository: PartnerRepository) {
-    val partners = repository.getPartners()
+fun PartnersScreen(navController: NavController) {
+    val partners = PartnerRepository.getPartners()
 
     LazyColumn(
         modifier = Modifier

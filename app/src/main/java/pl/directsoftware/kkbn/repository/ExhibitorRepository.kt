@@ -5,7 +5,9 @@ import pl.directsoftware.kkbn.api.data.Exhibitor
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
 
-class ExhibitorRepository : AbstractRepository() {
+object ExhibitorRepository : AbstractRepository() {
+
+    private val logger = Logger(ExhibitorRepository::class.java.simpleName)
 
     fun getExhibitors(): List<Exhibitor>? {
         val exhibitors = runBlocking { service.getExhibitors() }
@@ -15,10 +17,5 @@ class ExhibitorRepository : AbstractRepository() {
         }
 
         return exhibitors.data
-    }
-
-    companion object {
-
-        private val logger = Logger(ExhibitorRepository::class.java.simpleName)
     }
 }

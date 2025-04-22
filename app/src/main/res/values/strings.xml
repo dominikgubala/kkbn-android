@@ -12,6 +12,11 @@
     <string name="title_contacts">Contacts</string>
     <string name="title_downloads">Downloads</string>
     <string name="title_login">Login</string>
+    <string name="title_logout">Logout</string>
+    <string name="title_my_account">My Account</string>
+    <string name="title_event_management">Event Management</string>
+    <string name="title_participant_management">Participant Management</string>
+    <string name="title_host_management">Host Management</string>
 
     <string name="visit_partner_site">Visit the partner site</string>
     <string name="visit_exhibitor_site">Visit the exhibitor site</string>
@@ -21,7 +26,7 @@
     <string name="sign_up">Sign up</string>
     <string name="operation_unavailable">Cannot perform this operation</string>
     <string name="email_address">E-mail</string>
-    <string name="code_token">Code</string>
+    <string name="code_token">6-character code</string>
     <string name="login">Login</string>
     <string name="auth_error">An error occurred during authentication</string>
     <string name="logged_in">Logged in</string>

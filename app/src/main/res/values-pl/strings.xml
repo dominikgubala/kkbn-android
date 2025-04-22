@@ -12,6 +12,11 @@
     <string name="title_contacts">Kontakty"</string>
     <string name="title_downloads">Materiały"</string>
     <string name="title_login">Logowanie</string>
+    <string name="title_logout">Wyloguj</string>
+    <string name="title_my_account">Moje konto</string>
+    <string name="title_event_management">Zarządzanie warsztatami</string>
+    <string name="title_participant_management">Zarządzanie uczestnikami</string>
+    <string name="title_host_management">Zarządzanie prowadzącymi</string>
 
     <string name="visit_partner_site">Odwiedź stronę partnera</string>
     <string name="visit_exhibitor_site">Odwiedź stronę wystawcy</string>
@@ -21,7 +26,7 @@
     <string name="sign_up">Zapisz się</string>
     <string name="operation_unavailable">Nie można wykonać tej operacji</string>
     <string name="email_address">E-mail</string>
-    <string name="code_token">Kod</string>
+    <string name="code_token">6-znakowy kod</string>
     <string name="login">Zaloguj</string>
     <string name="auth_error">Wystąpił błąd podczas autentykacji</string>
     <string name="logged_in">Zalogowano</string>

@@ -2,29 +2,51 @@ package pl.directsoftware.kkbn
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pl.directsoftware.kkbn.api.ApiPrivateClient
+import pl.directsoftware.kkbn.api.data.Event
+import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.api.data.News
 import pl.directsoftware.kkbn.auth.EventMemberType
 import pl.directsoftware.kkbn.defs.Setting
 import pl.directsoftware.kkbn.repository.CommonRepository
+import pl.directsoftware.kkbn.repository.EventHostRepository
+import pl.directsoftware.kkbn.repository.EventRepository
+import pl.directsoftware.kkbn.repository.NewsRepository
+import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 import pl.directsoftware.kkbn.utils.Logger
+import pl.directsoftware.kkbn.utils.SessionManager
 import pl.directsoftware.kkbn.utils.Settings
+import javax.inject.Inject
 
-class AppViewModel : ViewModel() {
+@HiltViewModel
+class AppViewModel @Inject constructor(
+
+) : ViewModel() {
 
     private val _isLoggedIn = MutableStateFlow(false)
-
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
+
+    private val _refreshing = MutableStateFlow(false)
+    val refreshing: StateFlow<Boolean> = _refreshing
+
+    var onRefresh: (() -> Unit)? = null
 
     init {
         val token = runBlocking { Settings.readString(Setting.BEARER_TOKEN) }
-        if (token != null) {
+        if (!token.isNullOrEmpty()) {
             ApiPrivateClient.init(token)
             if (ApiPrivateClient.ping()) {
+                runBlocking {
+                    val email = Settings.readString(Setting.USERNAME)
+                    val memberType = EventMemberType.MANAGEMENT // todo EventMemberType.fromInt(Settings.readInt(Setting.MEMBER_TYPE))
+                    SessionManager.authorize(email!!, memberType)
+                }
                 _isLoggedIn.value = true
                 logger.debug("Automatyczna autentykacja zakończona powodzeniem")
             }
@@ -43,7 +65,10 @@ class AppViewModel : ViewModel() {
             try {
                 ApiPrivateClient.init(accessCode.token)
                 if (ApiPrivateClient.ping()) {
+                    SessionManager.authorize(email, accessCode.memberType)
                     viewModelScope.launch(Dispatchers.IO) {
+                        Settings.writeString(Setting.USERNAME, email)
+                        Settings.writeInt(Setting.MEMBER_TYPE, accessCode.memberType.code)
                         Settings.writeString(Setting.BEARER_TOKEN, accessCode.token)
                     }
                     _isLoggedIn.value = true
@@ -55,6 +80,64 @@ class AppViewModel : ViewModel() {
         }
 
         return false
+    }
+
+    fun logout() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Settings.writeString(Setting.USERNAME, "")
+            Settings.writeString(Setting.BEARER_TOKEN, "")
+            Settings.writeInt(Setting.MEMBER_TYPE, EventMemberType.ANONYMOUS.code)
+        }
+
+        _isLoggedIn.value = false
+    }
+
+    suspend fun getNews(): List<News>? {
+        try {
+            val newsList = NewsRepository.getNews()
+            newsList?.forEach { news ->
+                news.bitmap = loadImageFromUrl("https://kkbn.pl/${news.imagePath}")
+            }
+            return newsList
+        } catch (e: Exception) {
+            logger.methodException("getNews", e)
+        }
+        return null
+    }
+
+    fun getEvents(): List<Event>? {
+        try {
+            return EventRepository.getEvents()
+        } catch (e: Exception) {
+            logger.methodException("getEvents", e)
+        }
+        return null
+    }
+
+    fun getEventHosts(): List<EventHost>? {
+        try {
+            return EventHostRepository.getEventHosts()
+        } catch (e: Exception) {
+            logger.methodException("getEventHosts", e)
+        }
+        return null
+    }
+
+    fun getEventParticipants(): List<EventHost>? {
+        try {
+            return EventHostRepository.getEventParticipants()
+        } catch (e: Exception) {
+            logger.methodException("getEventParticipants", e)
+        }
+        return null
+    }
+
+    fun refresh() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _refreshing.value = true
+            onRefresh?.invoke()
+            _refreshing.value = false
+        }
     }
 
     companion object {

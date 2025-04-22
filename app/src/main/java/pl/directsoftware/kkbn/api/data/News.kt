@@ -1,5 +1,6 @@
 package pl.directsoftware.kkbn.api.data
 
+import androidx.compose.ui.graphics.ImageBitmap
 import pl.directsoftware.kkbn.utils.Consts.MEDIA_PATH
 
 data class News(
@@ -11,4 +12,6 @@ data class News(
 ) {
     val imagePath
         get() = "$MEDIA_PATH/$image"
+
+    var bitmap: ImageBitmap? = null
 }

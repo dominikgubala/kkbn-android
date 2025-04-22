@@ -5,7 +5,9 @@ import pl.directsoftware.kkbn.api.data.Place
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
 
-class PlaceRepository : AbstractRepository() {
+object PlaceRepository : AbstractRepository() {
+
+    private val logger = Logger(PlaceRepository::class.java.simpleName)
 
     fun getPlace(): Place? {
         val place = runBlocking { service.getPlace() }
@@ -15,10 +17,5 @@ class PlaceRepository : AbstractRepository() {
         }
 
         return place.data
-    }
-
-    companion object {
-
-        private val logger = Logger(PlaceRepository::class.java.simpleName)
     }
 }

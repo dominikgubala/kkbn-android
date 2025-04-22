@@ -28,11 +28,8 @@ import coil3.compose.AsyncImage
 import pl.directsoftware.kkbn.repository.PlaceRepository
 
 @Composable
-fun PlaceScreen(
-    navController: NavController,
-    repository: PlaceRepository
-) {
-    val hotel = repository.getPlace() ?: return
+fun PlaceScreen() {
+    val hotel = PlaceRepository.getPlace() ?: return
 
     Column(
         modifier = Modifier.fillMaxWidth()

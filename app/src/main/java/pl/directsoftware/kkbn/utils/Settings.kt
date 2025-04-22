@@ -16,13 +16,13 @@ object Settings {
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
     private suspend fun write(key: Preferences.Key<String>, value: String) {
-        App.instance.context.dataStore.edit { preferences ->
+        App.context.dataStore.edit { preferences ->
             preferences[key] = value
         }
     }
 
     private fun read(key: Preferences.Key<String>): Flow<String?> {
-        return App.instance.context.dataStore.data.map { preferences ->
+        return App.context.dataStore.data.map { preferences ->
             preferences[key]
         }
     }
@@ -31,7 +31,15 @@ object Settings {
         write(stringPreferencesKey(setting.name), value)
     }
 
+    suspend fun writeInt(setting: Setting, value: Int) {
+        write(stringPreferencesKey(setting.name), value.toString())
+    }
+
     suspend fun readString(setting: Setting): String? {
         return read(stringPreferencesKey(setting.name)).first()
+    }
+
+    suspend fun readInt(setting: Setting): Int? {
+        return read(stringPreferencesKey(setting.name)).first()?.toIntOrNull()
     }
 }

@@ -18,6 +18,7 @@ data class Event(
     val currentParticipants: Int,
     val maxParticipants: Int,
 ): ISerializable {
+
     fun getDuration(): String {
 
         if (dateTimeBegin == null || dateTimeEnd == null) return ""
@@ -33,25 +34,21 @@ data class Event(
         val duration = Duration.between(start, end)
 
         return "${duration.toMinutes()} min."
-
-//        val totalMinutes = duration.toMinutes()
-//        val hours = totalMinutes / 60
-//        val minutes = totalMinutes % 60
-//
-//        val sb = StringBuilder()
-//
-//        if (hours != 0L)
-//            sb.append("$hours h")
-//
-//        if (hours != 0L && minutes != 0L)
-//            sb.append(", ")
-//
-//        if (minutes != 0L)
-//            sb.append("$minutes min.")
-//
-//        return sb.toString()
     }
 
+    fun getTime(): String {
+        val sb = StringBuilder()
+
+        if (dateTimeBegin != null)
+            sb.append(dateTimeBegin)
+
+        if (dateTimeEnd != null) {
+            if (sb.isNotEmpty())
+                sb.append(" - ")
+            sb.append(dateTimeEnd)
+        }
+        return sb.toString()
+    }
 
     override fun serialize(): String {
         return URLEncoder.encode("$id^$title^$speaker^$dateTimeBegin^$dateTimeEnd^$host^$currentParticipants^$maxParticipants", "UTF-8")

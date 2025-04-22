@@ -5,7 +5,9 @@ import pl.directsoftware.kkbn.api.data.Download
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
 
-class DownloadRepository : AbstractRepository() {
+object DownloadRepository : AbstractRepository() {
+
+    private val logger = Logger(DownloadRepository::class.java.simpleName)
 
     fun getDownloads(): List<Download>? {
         val downloads = runBlocking { service.getDownloads() }
@@ -15,10 +17,5 @@ class DownloadRepository : AbstractRepository() {
         }
 
         return downloads.data
-    }
-
-    companion object {
-
-        private val logger = Logger(DownloadRepository::class.java.simpleName)
     }
 }
