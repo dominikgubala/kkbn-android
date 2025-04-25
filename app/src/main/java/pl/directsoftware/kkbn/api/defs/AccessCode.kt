@@ -7,6 +7,7 @@ data class AccessCode(
     val email: String,
     val code: String,
     val memberType: EventMemberType,
+    val memberId: Int,
 ) {
     override fun toString(): String {
         return "$email^$code^${memberType.code}"

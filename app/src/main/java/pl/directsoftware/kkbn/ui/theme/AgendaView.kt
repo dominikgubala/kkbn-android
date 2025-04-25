@@ -1,6 +1,5 @@
 package pl.directsoftware.kkbn.ui.theme
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,7 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.directsoftware.kkbn.AppViewModel
+import kotlinx.coroutines.flow.StateFlow
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventDay
@@ -179,9 +178,12 @@ fun EventDayScreen(
 }
 
 @Composable
-fun EventScreen(event: Event, viewModel: AppViewModel) {
-
-    val isLoggedIn = viewModel.isLoggedIn.collectAsState()
+fun EventScreen(
+    event: Event,
+    isLoggedIn: StateFlow<Boolean>,
+    onRegister: (Int) -> Unit = {},
+) {
+    val isLogged = isLoggedIn.collectAsState()
 
     Column(
         modifier = Modifier
@@ -263,7 +265,7 @@ fun EventScreen(event: Event, viewModel: AppViewModel) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.available_places, event.currentParticipants, event.maxParticipants),
+                text = stringResource(R.string.available_places, event.maxParticipants - event.currentParticipants, event.maxParticipants),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
@@ -273,17 +275,13 @@ fun EventScreen(event: Event, viewModel: AppViewModel) {
 
             Spacer(modifier = Modifier.weight(1f))
 
-            if (isLoggedIn.value) {
+            if (isLogged.value) {
                 val enabled = event.currentParticipants < event.maxParticipants
                 GrayButton(
                     text = stringResource(R.string.sign_up),
                     enabled = enabled,
                 ) {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.operation_unavailable),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    onRegister(event.id)
                 }
             }
         }

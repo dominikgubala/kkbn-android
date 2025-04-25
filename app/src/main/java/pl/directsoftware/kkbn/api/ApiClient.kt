@@ -12,7 +12,7 @@ import java.io.File
 object ApiClient {
 
     const val BASE_URL = "https://kkbn.pl/api/"
-    private const val BASE_TOKEN = "cHVibGljQHJlcXVlc3QucGxeRkZGRkZGXi0x"
+    const val BASE_TOKEN = "cHVibGljQHJlcXVlc3QucGxeRkZGRkZGXi0x"
     private const val CACHE_SIZE = 10L * 1024 * 1024
 
     lateinit var cacheDir: File

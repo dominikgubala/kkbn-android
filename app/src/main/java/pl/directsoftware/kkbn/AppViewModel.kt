@@ -20,7 +20,7 @@ import pl.directsoftware.kkbn.defs.Setting
 import pl.directsoftware.kkbn.repository.AgendaRepository
 import pl.directsoftware.kkbn.repository.CommitteeRepository
 import pl.directsoftware.kkbn.repository.CommonRepository
-import pl.directsoftware.kkbn.repository.EventHostRepository
+import pl.directsoftware.kkbn.repository.EventMemberRepository
 import pl.directsoftware.kkbn.repository.EventRepository
 import pl.directsoftware.kkbn.repository.NewsRepository
 import pl.directsoftware.kkbn.repository.PartnerRepository
@@ -44,18 +44,23 @@ class AppViewModel @Inject constructor(
     var onRefresh: (() -> Unit)? = null
 
     init {
-        val token = runBlocking { Settings.readString(Setting.BEARER_TOKEN) }
-        if (!token.isNullOrEmpty()) {
-            ApiPrivateClient.init(token)
-            if (ApiPrivateClient.ping()) {
-                runBlocking {
-                    val email = Settings.readString(Setting.USERNAME)
-                    val memberType = EventMemberType.MANAGEMENT // todo EventMemberType.fromInt(Settings.readInt(Setting.MEMBER_TYPE))
-                    SessionManager.authorize(email!!, memberType)
+        try {
+            val token = runBlocking { Settings.readString(Setting.BEARER_TOKEN) }
+            if (!token.isNullOrEmpty()) {
+                ApiPrivateClient.init(token)
+                if (ApiPrivateClient.ping()) {
+                    runBlocking {
+                        val email = Settings.readString(Setting.USERNAME)
+                        val memberId = Settings.readInt(Setting.MEMBER_ID)
+                        val memberType = EventMemberType.fromInt(Settings.readInt(Setting.MEMBER_TYPE)) //EventMemberType.MANAGEMENT todo EventMemberType.fromInt(Settings.readInt(Setting.MEMBER_TYPE))
+                        SessionManager.authorize(email!!, memberType, memberId)
+                    }
+                    _isLoggedIn.value = true
+                    logger.debug("Automatyczna autentykacja zakończona powodzeniem")
                 }
-                _isLoggedIn.value = true
-                logger.debug("Automatyczna autentykacja zakończona powodzeniem")
             }
+        } catch (e: Exception) {
+            logger.methodException("init", e)
         }
     }
 
@@ -71,11 +76,12 @@ class AppViewModel @Inject constructor(
             try {
                 ApiPrivateClient.init(accessCode.token)
                 if (ApiPrivateClient.ping()) {
-                    SessionManager.authorize(email, accessCode.memberType)
+                    SessionManager.authorize(email, accessCode.memberType, accessCode.memberId)
                     viewModelScope.launch(Dispatchers.IO) {
                         Settings.writeString(Setting.USERNAME, email)
                         Settings.writeInt(Setting.MEMBER_TYPE, accessCode.memberType.code)
                         Settings.writeString(Setting.BEARER_TOKEN, accessCode.token)
+                        Settings.writeInt(Setting.MEMBER_ID, accessCode.memberId)
                     }
                     _isLoggedIn.value = true
                     return true
@@ -93,6 +99,8 @@ class AppViewModel @Inject constructor(
             Settings.writeString(Setting.USERNAME, "")
             Settings.writeString(Setting.BEARER_TOKEN, "")
             Settings.writeInt(Setting.MEMBER_TYPE, EventMemberType.ANONYMOUS.code)
+            Settings.writeInt(Setting.MEMBER_ID, -1)
+            SessionManager.destroy()
         }
 
         _isLoggedIn.value = false
@@ -166,7 +174,7 @@ class AppViewModel @Inject constructor(
 
     fun getEventHosts(): List<EventHost>? {
         try {
-            return EventHostRepository.getEventHosts()
+            return EventMemberRepository.getEventHosts()
         } catch (e: Exception) {
             logger.methodException("getEventHosts", e)
         }
@@ -183,7 +191,7 @@ class AppViewModel @Inject constructor(
 
     fun getEventParticipants(): List<EventHost>? {
         try {
-            return EventHostRepository.getEventParticipants()
+            return EventMemberRepository.getEventParticipants()
         } catch (e: Exception) {
             logger.methodException("getEventParticipants", e)
         }
@@ -194,6 +202,25 @@ class AppViewModel @Inject constructor(
         event: Event
     ): Event? {
         return EventRepository.updateEvent(event)
+    }
+
+    fun registerParticipant(
+        eventId: Int,
+        memberId: Int,
+    ): Event? {
+        return EventRepository.registerParticipant(eventId, memberId)
+    }
+
+    fun updateEventHost(
+        host: EventHost
+    ): EventHost? {
+        return EventMemberRepository.updateEventHost(host)
+    }
+
+    fun updateEventParticipant(
+        participant: EventHost
+    ): EventHost? {
+        return EventMemberRepository.updateEventParticipant(participant)
     }
 
     companion object {

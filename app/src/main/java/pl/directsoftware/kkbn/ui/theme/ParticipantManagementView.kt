@@ -25,28 +25,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import pl.directsoftware.kkbn.AppViewModel
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventHost
-import pl.directsoftware.kkbn.common.Route
 
 @Composable
 fun ParticipantManagementScreen(
-    viewModel: AppViewModel,
-    navController: NavController,
+    loadData: () -> List<EventHost>?,
+    onClick: (EventHost) -> Unit,
 ) {
-    val context = LocalContext.current
     val isLoading = remember { mutableStateOf(true) }
     val participants = remember { mutableStateOf<List<EventHost>?>(null) }
 
     LaunchedEffect(Event::class) {
-        participants.value = viewModel.getEventParticipants()
+        participants.value = loadData()
         isLoading.value = false
     }
 
@@ -63,11 +58,7 @@ fun ParticipantManagementScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                navController.navigate(
-                                    Route.PARTICIPANTS_MANAGEMENT_BY_OBJECT.setObject(
-                                        participant
-                                    )
-                                )
+                                onClick(participant)
                             }
                     ) {
                         Row(
@@ -77,14 +68,6 @@ fun ParticipantManagementScreen(
                                 .padding(horizontal = 16.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-//                            Text(
-//                                text = event.getTime(),
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                modifier = Modifier
-//                                    .weight(1f)
-//                                    .padding(end = 8.dp)
-//                            )
-
                             Column(
                                 modifier = Modifier
                                     .weight(3f),
@@ -122,8 +105,8 @@ fun ParticipantManagementScreen(
 @Composable
 fun ParticipantManagementScreen(
     participant: EventHost,
-    navController: NavController,
-    onSave: (EventHost) -> Unit = {}
+    onBack: () -> Unit,
+    onSave: (EventHost) -> Unit,
 ) {
     var active by remember { mutableStateOf(participant.active) }
 
@@ -158,7 +141,7 @@ fun ParticipantManagementScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Button(
-                onClick = { navController.popBackStack() },
+                onClick = { onBack() },
                 modifier = Modifier
                     .weight(1f)
             ) {

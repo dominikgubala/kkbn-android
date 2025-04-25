@@ -33,6 +33,7 @@
 
     <string name="edit_event">Edycja wydarzenia</string>
     <string name="edit_participant">Edycja uczestnika</string>
+    <string name="edit_host">Edycja prowadzącego</string>
     <string name="title">Tytuł</string>
     <string name="start_time">Godzina rozpoczęcia</string>
     <string name="end_time">Godzina zakończenia</string>

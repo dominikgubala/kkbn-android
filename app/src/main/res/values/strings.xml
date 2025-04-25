@@ -33,6 +33,7 @@
 
     <string name="edit_event">Edit Event</string>
     <string name="edit_participant">Edit Participant</string>
+    <string name="edit_host">Edycja host</string>
     <string name="title">Title</string>
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>

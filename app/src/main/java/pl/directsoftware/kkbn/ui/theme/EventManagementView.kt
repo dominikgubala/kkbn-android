@@ -53,14 +53,14 @@ import java.util.Calendar
 
 @Composable
 fun EventManagementScreen(
-    onFetch: () -> List<Event>?,
+    loadData: () -> List<Event>?,
     goTo: (Event) -> Unit = {},
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val events = remember { mutableStateOf<List<Event>?>(null) }
 
     LaunchedEffect(Event::class) {
-        events.value = onFetch()
+        events.value = loadData()
         isLoading.value = false
     }
 
@@ -108,7 +108,7 @@ fun EventManagementScreen(
                                 )
 
                                 Text(
-                                    text = stringResource(R.string.available_places, event.currentParticipants, event.maxParticipants),
+                                    text = stringResource(R.string.available_places, event.maxParticipants - event.currentParticipants, event.maxParticipants),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     maxLines = 1,

@@ -43,6 +43,7 @@ enum class Route(
     PARTICIPANTS_MANAGEMENT("participants-management$", R.string.title_participant_management, false, Icons.Default.Info),
     PARTICIPANTS_MANAGEMENT_BY_OBJECT("participants-management/{object}", R.string.title_participant_management, false, Icons.Default.Info),
     HOST_MANAGEMENT("host-management$", R.string.title_host_management, false, Icons.Default.Info),
+    HOST_MANAGEMENT_BY_OBJECT("host-management/{object}", R.string.title_host_management, false, Icons.Default.Info),
 
     ;
 

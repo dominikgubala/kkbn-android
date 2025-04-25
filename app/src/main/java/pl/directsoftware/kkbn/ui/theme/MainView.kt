@@ -60,6 +60,7 @@ import pl.directsoftware.kkbn.common.Route
 import pl.directsoftware.kkbn.utils.Consts.TRANSITION_TIME
 import pl.directsoftware.kkbn.utils.Logger
 import pl.directsoftware.kkbn.utils.Notification
+import pl.directsoftware.kkbn.utils.SessionManager
 
 private val logger = Logger("MainView")
 
@@ -340,7 +341,16 @@ fun GoToRoute(
         Route.EVENT_BY_OBJECT -> {
             val serialized = backStackEntry.arguments?.getString("object")
             val event = Event.restore(serialized) ?: return
-            EventScreen(event, viewModel)
+            EventScreen(
+                event,
+                viewModel.isLoggedIn,
+                onRegister = { eventId ->
+                    val memberId = SessionManager.memberId ?: -1
+                    val response = viewModel.registerParticipant(eventId, memberId)
+                    Notification.toast(response != null)
+                    navController.popBackStack()
+                }
+            )
         }
 
         Route.LOGIN -> {
@@ -365,10 +375,18 @@ fun GoToRoute(
             )
         }
 
-        Route.MY_ACCOUNT -> MyAccountScreen(viewModel, navController)
+        Route.MY_ACCOUNT -> MyAccountScreen(
+            goTo = {
+                navController.navigate(it.type)
+            },
+            onLogout = {
+                viewModel.logout()
+                navController.navigate(Route.NEWS.type)
+            }
+        )
 
         Route.EVENT_MANAGEMENT -> EventManagementScreen(
-            onFetch = {
+            loadData = {
                 viewModel.getEvents()
             },
             goTo = {
@@ -397,16 +415,58 @@ fun GoToRoute(
             )
         }
 
-        Route.PARTICIPANTS_MANAGEMENT -> ParticipantManagementScreen(viewModel, navController)
+        Route.PARTICIPANTS_MANAGEMENT -> ParticipantManagementScreen(
+            loadData = {
+                viewModel.getEventParticipants()
+            },
+            onClick = {
+                navController.navigate(
+                    Route.PARTICIPANTS_MANAGEMENT_BY_OBJECT.setObject(it)
+                )
+            }
+        )
 
         Route.PARTICIPANTS_MANAGEMENT_BY_OBJECT -> {
             val serialized = backStackEntry.arguments?.getString("object")
             val participant = EventHost.restore(serialized) ?: return
-            ParticipantManagementScreen(participant, navController) {
-                logger.debug("save participant")
-            }
+            ParticipantManagementScreen(
+                participant,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onSave = {
+                    val response = viewModel.updateEventParticipant(it)
+                    Notification.toast(response != null)
+                    navController.popBackStack()
+                }
+            )
         }
 
-        Route.HOST_MANAGEMENT -> HostManagementScreen(viewModel, navController)
+        Route.HOST_MANAGEMENT -> HostManagementScreen(
+            loadData = {
+                viewModel.getEventHosts()
+            },
+            onClick = {
+                navController.navigate(
+                    Route.HOST_MANAGEMENT_BY_OBJECT.setObject(it)
+                )
+            }
+        )
+
+        Route.HOST_MANAGEMENT_BY_OBJECT -> {
+            val serialized = backStackEntry.arguments?.getString("object")
+            val host = EventHost.restore(serialized) ?: return
+            HostManagementScreen(
+                host,
+                onBack = {
+                    navController.popBackStack()
+                },
+                onSave = {
+                    val response = viewModel.updateEventHost(it)
+                    Notification.toast(response != null)
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }

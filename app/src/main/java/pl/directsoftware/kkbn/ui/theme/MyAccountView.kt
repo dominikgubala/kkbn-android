@@ -16,8 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import pl.directsoftware.kkbn.AppViewModel
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.auth.MemberRole
 import pl.directsoftware.kkbn.common.Route
@@ -25,36 +23,35 @@ import pl.directsoftware.kkbn.utils.SessionManager
 
 @Composable
 fun MyAccountScreen(
-    viewModel: AppViewModel,
-    navController: NavController
+    goTo: (Route) -> Unit = {},
+    onLogout: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
         if (SessionManager.isGranted(MemberRole.EDIT_PARTICIPANT)) {
             AccountOptionItem(R.string.title_event_management, Icons.Default.Event) {
-                navController.navigate(Route.EVENT_MANAGEMENT.type)
+                goTo(Route.EVENT_MANAGEMENT)
             }
             HorizontalDivider(thickness = 1.dp)
         }
 
         if (SessionManager.isGranted(MemberRole.EDIT_HOST)) {
             AccountOptionItem(R.string.title_participant_management, Icons.Default.Group) {
-                navController.navigate(Route.PARTICIPANTS_MANAGEMENT.type)
+                goTo(Route.PARTICIPANTS_MANAGEMENT)
             }
             HorizontalDivider(thickness = 1.dp)
         }
 
         if (SessionManager.isGranted(MemberRole.EDIT_ALL)) {
             AccountOptionItem(R.string.title_host_management, Icons.Default.Group) {
-                navController.navigate(Route.HOST_MANAGEMENT.type)
+                goTo(Route.HOST_MANAGEMENT)
             }
             HorizontalDivider(thickness = 1.dp)
         }
 
         AccountOptionItem(R.string.title_logout, Icons.AutoMirrored.Filled.ExitToApp) {
-            viewModel.logout()
-            navController.navigate(Route.NEWS.type)
+            onLogout()
         }
     }
 }
