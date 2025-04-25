@@ -28,11 +28,13 @@ import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import pl.directsoftware.kkbn.R
+import pl.directsoftware.kkbn.common.HtmlData
 import pl.directsoftware.kkbn.utils.FileHelper.downloadPdfToCache
 import pl.directsoftware.kkbn.utils.FileHelper.openPdf
 
@@ -102,5 +104,31 @@ fun DownloadAndOpenPdfButton(
 fun ProgressIndicator() {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
+    }
+}
+
+@Composable
+fun HtmlContent(
+    htmlData: HtmlData,
+) {
+    if (!htmlData.isEmpty()) {
+        for ((index, part) in htmlData.parts.withIndex()) {
+            if (part.isNotEmpty()) {
+                Text(
+                    text = part,
+                    modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Start
+                )
+            }
+            if (index < htmlData.matches.size) {
+                val bitmap = htmlData.bitmapList[index]
+                NetworkImage(
+                    image = bitmap,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
+                )
+            }
+        }
     }
 }

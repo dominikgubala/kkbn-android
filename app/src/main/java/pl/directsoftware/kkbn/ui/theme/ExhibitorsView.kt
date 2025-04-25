@@ -28,7 +28,10 @@ import pl.directsoftware.kkbn.common.Route
 import pl.directsoftware.kkbn.repository.ExhibitorRepository
 
 @Composable
-fun ExhibitorsScreen(navController: NavController) {
+fun ExhibitorsScreen(
+    navController: NavController,
+    onClick: (Exhibitor) -> Unit = {}
+) {
     val exhibitors = ExhibitorRepository.getExhibitors()
 
     LazyColumn(
@@ -44,9 +47,7 @@ fun ExhibitorsScreen(navController: NavController) {
                         .padding(4.dp)
                         .clickable(
                             onClick = {
-                                navController.navigate(
-                                    Route.PARTNERS_BY_OBJECT.setObject(exhibitor)
-                                )
+                                onClick(exhibitor)
                             }
                         ),
                     verticalAlignment = Alignment.CenterVertically
@@ -71,7 +72,7 @@ fun ExhibitorsScreen(navController: NavController) {
 }
 
 @Composable
-fun ExhibitorScreen(navController: NavController, exhibitor: Exhibitor) {
+fun ExhibitorScreen(exhibitor: Exhibitor) {
     Column(
         modifier = Modifier
             .fillMaxWidth(),

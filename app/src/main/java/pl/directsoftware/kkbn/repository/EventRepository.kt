@@ -19,4 +19,32 @@ object EventRepository : AbstractRepository() {
         return events.data
     }
 
+    fun updateEvent(event: Event): Event? {
+        val events = runBlocking {
+            try {
+                logger.debug("updateEvent, id(${event.id}), title(${event.title}), dateTimeBegin(${event.dateTimeBegin}), dateTimeEnd(${event.dateTimeEnd}), host(${event.host?.id}), maxParticipants(${event.maxParticipants})")
+                privateService.updateEvent(
+                    event.id,
+                    event.title,
+                    event.dateTimeBegin,
+                    event.dateTimeEnd,
+                    event.host?.id,
+                    event.maxParticipants
+                )
+            } catch (e: Exception) {
+                logger.methodException("updateEvent(${event.id})", e)
+                return@runBlocking null
+            }
+        }
+
+        if (events == null) return null
+
+        if (!events.success) {
+            logger.methodError("updateEvent($event.id)", events.errors?.firstOrNull() ?: "unknown")
+            return null
+        }
+
+        return events.data
+    }
+
 }

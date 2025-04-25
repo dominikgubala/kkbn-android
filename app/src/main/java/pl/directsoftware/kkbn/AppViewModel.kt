@@ -9,15 +9,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pl.directsoftware.kkbn.api.ApiPrivateClient
+import pl.directsoftware.kkbn.api.data.Committee
 import pl.directsoftware.kkbn.api.data.Event
+import pl.directsoftware.kkbn.api.data.EventDay
 import pl.directsoftware.kkbn.api.data.EventHost
 import pl.directsoftware.kkbn.api.data.News
+import pl.directsoftware.kkbn.api.data.Partner
 import pl.directsoftware.kkbn.auth.EventMemberType
 import pl.directsoftware.kkbn.defs.Setting
+import pl.directsoftware.kkbn.repository.AgendaRepository
+import pl.directsoftware.kkbn.repository.CommitteeRepository
 import pl.directsoftware.kkbn.repository.CommonRepository
 import pl.directsoftware.kkbn.repository.EventHostRepository
 import pl.directsoftware.kkbn.repository.EventRepository
 import pl.directsoftware.kkbn.repository.NewsRepository
+import pl.directsoftware.kkbn.repository.PartnerRepository
 import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 import pl.directsoftware.kkbn.utils.Logger
 import pl.directsoftware.kkbn.utils.SessionManager
@@ -92,15 +98,59 @@ class AppViewModel @Inject constructor(
         _isLoggedIn.value = false
     }
 
-    suspend fun getNews(): List<News>? {
+    fun refresh() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _refreshing.value = true
+            onRefresh?.invoke()
+            _refreshing.value = false
+        }
+    }
+
+    fun getNews(): List<News>? {
         try {
             val newsList = NewsRepository.getNews()
             newsList?.forEach { news ->
-                news.bitmap = loadImageFromUrl("https://kkbn.pl/${news.imagePath}")
+                news.bitmap = runBlocking { loadImageFromUrl("https://kkbn.pl/${news.imagePath}") }
             }
             return newsList
         } catch (e: Exception) {
             logger.methodException("getNews", e)
+        }
+        return null
+    }
+
+    fun getNews(id: Int): News? {
+        try {
+            return NewsRepository.getNewsById(id)
+        } catch (e: Exception) {
+            logger.methodException("getNews($id)", e)
+        }
+        return null
+    }
+
+    fun getAgendaEvents(): List<EventDay>? {
+        try {
+            return AgendaRepository.getEvents()
+        } catch (e: Exception) {
+            logger.methodException("getAgendaEvents", e)
+        }
+        return null
+    }
+
+    fun getCommittee(): List<Committee>? {
+        try {
+            return CommitteeRepository.getCommittee()
+        } catch (e: Exception) {
+            logger.methodException("getCommittee", e)
+        }
+        return null
+    }
+
+    fun getPartners(): List<Partner>? {
+        try {
+            return PartnerRepository.getPartners()
+        } catch (e: Exception) {
+            logger.methodException("getPartners", e)
         }
         return null
     }
@@ -123,6 +173,14 @@ class AppViewModel @Inject constructor(
         return null
     }
 
+    fun getEventHostMap(): MutableMap<Int,String> {
+        val map = mutableMapOf<Int,String>()
+        getEventHosts()?.forEach {
+            map[it.id] = "${it.firstName} ${it.lastName}"
+        }
+        return map
+    }
+
     fun getEventParticipants(): List<EventHost>? {
         try {
             return EventHostRepository.getEventParticipants()
@@ -132,12 +190,10 @@ class AppViewModel @Inject constructor(
         return null
     }
 
-    fun refresh() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _refreshing.value = true
-            onRefresh?.invoke()
-            _refreshing.value = false
-        }
+    fun updateEvent(
+        event: Event
+    ): Event? {
+        return EventRepository.updateEvent(event)
     }
 
     companion object {

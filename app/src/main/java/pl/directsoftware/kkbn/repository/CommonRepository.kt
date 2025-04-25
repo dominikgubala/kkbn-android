@@ -4,7 +4,6 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import pl.directsoftware.kkbn.api.defs.AccessCode
-import pl.directsoftware.kkbn.auth.EventMemberType
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
 

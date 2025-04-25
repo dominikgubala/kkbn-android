@@ -22,7 +22,7 @@
     <string name="visit_exhibitor_site">Visit the exhibitor site</string>
     <string name="choose_date">Choose a date</string>
     <string name="label_host">Host: </string>
-    <string name="available_places">Available places: </string>
+    <string name="available_places">Available places: %d/%d</string>
     <string name="sign_up">Sign up</string>
     <string name="operation_unavailable">Cannot perform this operation</string>
     <string name="email_address">E-mail</string>
@@ -30,4 +30,20 @@
     <string name="login">Login</string>
     <string name="auth_error">An error occurred during authentication</string>
     <string name="logged_in">Logged in</string>
+
+    <string name="edit_event">Edit Event</string>
+    <string name="edit_participant">Edit Participant</string>
+    <string name="title">Title</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
+    <string name="speaker">Presenter</string>
+    <string name="max_participants">Maximum Number of Participants</string>
+    <string name="current_participants">Current number of participants: %d</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="label_full_name">Full name</string>
+
+    <string name="saved_successfully">Saved successfully</string>
+    <string name="save_error">An error occurred while saving. Please try again</string>
+
 </resources>

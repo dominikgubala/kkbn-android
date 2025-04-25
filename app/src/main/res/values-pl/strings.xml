@@ -22,7 +22,7 @@
     <string name="visit_exhibitor_site">Odwiedź stronę wystawcy</string>
     <string name="choose_date">Wybierz datę</string>
     <string name="label_host">Prowadzący: </string>
-    <string name="available_places">Dostępne miejsca: </string>
+    <string name="available_places">Dostępne miejsca: %d/%d</string>
     <string name="sign_up">Zapisz się</string>
     <string name="operation_unavailable">Nie można wykonać tej operacji</string>
     <string name="email_address">E-mail</string>
@@ -30,4 +30,20 @@
     <string name="login">Zaloguj</string>
     <string name="auth_error">Wystąpił błąd podczas autentykacji</string>
     <string name="logged_in">Zalogowano</string>
+
+    <string name="edit_event">Edycja wydarzenia</string>
+    <string name="edit_participant">Edycja uczestnika</string>
+    <string name="title">Tytuł</string>
+    <string name="start_time">Godzina rozpoczęcia</string>
+    <string name="end_time">Godzina zakończenia</string>
+    <string name="speaker">Prowadzący</string>
+    <string name="max_participants">Maksymalna liczba uczestników</string>
+    <string name="current_participants">Obecna liczba uczestników: %d</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zapisz</string>
+    <string name="label_full_name">Nazwa</string>
+
+    <string name="saved_successfully">Zapisano pomyślnie</string>
+    <string name="save_error">Wystąpił błąd podczas zapisywania. Proszę spróbować ponownie</string>
+
 </resources>

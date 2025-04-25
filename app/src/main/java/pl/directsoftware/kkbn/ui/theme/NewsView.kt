@@ -31,24 +31,21 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import pl.directsoftware.kkbn.AppViewModel
 import pl.directsoftware.kkbn.api.data.News
 import pl.directsoftware.kkbn.common.HtmlData
-import pl.directsoftware.kkbn.common.Route
 import pl.directsoftware.kkbn.repository.NewsRepository
 import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 
 @Composable
 fun NewsScreen(
-    viewModel: AppViewModel,
-    navController: NavController
+    loadData: () -> List<News>?,
+    onClick: (News) -> Unit = {},
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val newsList = remember { mutableStateOf<List<News>?>(null) }
 
     LaunchedEffect(NewsRepository::class) {
-        newsList.value = viewModel.getNews()
+        newsList.value = loadData()
         isLoading.value = false
     }
 
@@ -70,7 +67,7 @@ fun NewsScreen(
                             .padding(horizontal = 16.dp, vertical = 4.dp)
                             .verticalScroll(rememberScrollState())
                             .clickable(
-                                onClick = { navController.navigate(Route.NEWS_BY_ID.setId(news.id)) }
+                                onClick = { onClick(news) }
                             )
                         ,
                         verticalAlignment = Alignment.CenterVertically
@@ -105,8 +102,7 @@ fun NewsScreen(
 
 @Composable
 fun NewsByIdScreen(
-    navController: NavController,
-    id: Int,
+    onLoad: () -> News?,
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val news = remember { mutableStateOf<News?>(null) }
@@ -114,7 +110,7 @@ fun NewsByIdScreen(
     val data = remember { mutableStateOf<HtmlData?>(null) }
 
     LaunchedEffect(News::class) {
-        news.value = NewsRepository.getNewsById(id)
+        news.value = onLoad()
         val htmlData = HtmlData(news.value!!.content)
 
         val urlList = mutableMapOf<Int,String>()

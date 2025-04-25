@@ -1,6 +1,5 @@
 package pl.directsoftware.kkbn.ui.theme
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,13 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import pl.directsoftware.kkbn.AppViewModel
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.common.Route
 
 @Composable
 fun HostManagementScreen(
-    viewModel: AppViewModel
+    viewModel: AppViewModel,
+    navController: NavController
 ) {
     val context = LocalContext.current
     val isLoading = remember { mutableStateOf(true) }
@@ -55,8 +57,11 @@ fun HostManagementScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                Toast.makeText(context, "Brak uprawnień do edycji", Toast.LENGTH_SHORT).show()
-                                // todo
+                                navController.navigate(
+                                    Route.PARTICIPANTS_MANAGEMENT_BY_OBJECT.setObject(
+                                        event
+                                    )
+                                )
                             }
                     ) {
                         Row(

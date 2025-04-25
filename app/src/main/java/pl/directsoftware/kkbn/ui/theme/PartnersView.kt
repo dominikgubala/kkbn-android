@@ -20,16 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.api.data.Partner
-import pl.directsoftware.kkbn.common.Route
-import pl.directsoftware.kkbn.repository.PartnerRepository
 
 @Composable
-fun PartnersScreen(navController: NavController) {
-    val partners = PartnerRepository.getPartners()
+fun PartnersScreen(
+    loadData: () -> List<Partner>?,
+    onClick: (Partner) -> Unit
+) {
+    val partners = loadData()
 
     LazyColumn(
         modifier = Modifier
@@ -44,9 +44,7 @@ fun PartnersScreen(navController: NavController) {
                         .padding(4.dp)
                         .clickable(
                             onClick = {
-                                navController.navigate(
-                                    Route.PARTNERS_BY_OBJECT.setObject(partner)
-                                )
+                                onClick(partner)
                             }
                         ),
                     verticalAlignment = Alignment.CenterVertically
@@ -71,7 +69,7 @@ fun PartnersScreen(navController: NavController) {
 }
 
 @Composable
-fun PartnerScreen(navController: NavController, partner: Partner) {
+fun PartnerScreen(partner: Partner) {
     Column(
         modifier = Modifier
             .fillMaxWidth(),

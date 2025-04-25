@@ -1,11 +1,11 @@
 package pl.directsoftware.kkbn.api.data
 
+import org.json.JSONObject
 import pl.directsoftware.kkbn.common.ISerializable
-import pl.directsoftware.kkbn.utils.StringHelper
 import java.net.URLDecoder
 import java.net.URLEncoder
-import java.time.LocalTime
 import java.time.Duration
+import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 data class Event(
@@ -14,7 +14,7 @@ data class Event(
     val speaker: String?,
     val dateTimeBegin: String?,
     val dateTimeEnd: String?,
-    val host: String?,
+    val host: EventHost?,
     val currentParticipants: Int,
     val maxParticipants: Int,
 ): ISerializable {
@@ -51,27 +51,38 @@ data class Event(
     }
 
     override fun serialize(): String {
-        return URLEncoder.encode("$id^$title^$speaker^$dateTimeBegin^$dateTimeEnd^$host^$currentParticipants^$maxParticipants", "UTF-8")
+        val json = JSONObject().apply {
+            put("id", id)
+            put("title", title)
+            put("speaker", speaker)
+            put("dateTimeBegin", dateTimeBegin)
+            put("dateTimeEnd", dateTimeEnd)
+            put("host", host?.toJSONObject())
+            put("currentParticipants", currentParticipants)
+            put("maxParticipants", maxParticipants)
+        }
+        return URLEncoder.encode(json.toString(), "UTF-8")
     }
 
     companion object {
         fun restore(value: String?): Event? {
-            val members = URLDecoder.decode(value, "UTF-8").split('^') ?: return null
-
-            try {
-                return Event(
-                    members.getOrNull(0)!!.toInt(),
-                    StringHelper.getString(members.getOrNull(1)),
-                    StringHelper.getStringOrNull(members.getOrNull(2)),
-                    StringHelper.getStringOrNull(members.getOrNull(3)),
-                    StringHelper.getStringOrNull(members.getOrNull(4)),
-                    StringHelper.getStringOrNull(members.getOrNull(5)),
-                    members.getOrNull(6)!!.toInt(),
-                    members.getOrNull(7)!!.toInt(),
+            if (value == null) return null
+            return try {
+                val decoded = URLDecoder.decode(value, "UTF-8")
+                val json = JSONObject(decoded)
+                Event(
+                    json.getInt("id"),
+                    json.optString("title"),
+                    json.opt("speaker")?.toString(),
+                    json.opt("dateTimeBegin")?.toString(),
+                    json.opt("dateTimeEnd")?.toString(),
+                    EventHost.fromJson(json.optJSONObject("host")),
+                    json.optInt("currentParticipants"),
+                    json.optInt("maxParticipants"),
                 )
             } catch (_: Exception) {
+                null
             }
-            return null
         }
     }
 }

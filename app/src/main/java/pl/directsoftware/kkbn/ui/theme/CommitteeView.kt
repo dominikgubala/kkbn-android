@@ -21,19 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import pl.directsoftware.kkbn.api.data.Committee
-import pl.directsoftware.kkbn.repository.CommitteeRepository
 import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 
 @Composable
-fun CommitteeScreen(navController: NavController) {
-
+fun CommitteeScreen(
+    loadData: () -> List<Committee>?
+) {
     val isLoading = remember { mutableStateOf(true) }
     val avatarList = remember { mutableMapOf<Committee,ImageBitmap?>() }
 
     LaunchedEffect(Committee::class) {
-        val committeeResource = CommitteeRepository.getCommittee()
+        val committeeResource = loadData()
         committeeResource?.forEach{ committee ->
             avatarList[committee] =
                 if (committee.avatar != null)

@@ -39,7 +39,9 @@ enum class Route(
     MY_ACCOUNT("my-account", R.string.title_my_account, true, Icons.Default.AccountCircle),
 
     EVENT_MANAGEMENT("event-management$", R.string.title_event_management, false, Icons.Default.Info),
+    EVENT_MANAGEMENT_BY_OBJECT("event-management/{object}", R.string.title_event_management, false, Icons.Default.Info),
     PARTICIPANTS_MANAGEMENT("participants-management$", R.string.title_participant_management, false, Icons.Default.Info),
+    PARTICIPANTS_MANAGEMENT_BY_OBJECT("participants-management/{object}", R.string.title_participant_management, false, Icons.Default.Info),
     HOST_MANAGEMENT("host-management$", R.string.title_host_management, false, Icons.Default.Info),
 
     ;

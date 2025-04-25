@@ -12,12 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -42,29 +38,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 import pl.directsoftware.kkbn.AppViewModel
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventDay
-import pl.directsoftware.kkbn.common.Route
-import pl.directsoftware.kkbn.repository.AgendaRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgendaScreen(
-    navController: NavController,
+    loadData: () -> List<EventDay>?,
+    onClick: (Event) -> Unit = {},
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val events = remember { mutableStateOf<List<EventDay>?>(null) }
 
     LaunchedEffect(EventDay::class) {
-        events.value = AgendaRepository.getEvents()
+        events.value = loadData()
         isLoading.value = false
     }
 
@@ -113,31 +105,31 @@ fun AgendaScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            EventDayScreen(navController, selectedFilter)
+            EventDayScreen(selectedFilter) {
+                onClick(it)
+            }
         }
     }
 }
 
 @Composable
 fun EventDayScreen(
-    navController: NavController,
-    day: EventDay
+    day: EventDay,
+    onClick: (Event) -> Unit = {},
 ) {
+    val rowHeight = 64.dp
     LazyColumn {
         items(day.events) { event ->
             Column {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(
-                            horizontal = 2.dp,
-                            vertical = 4.dp
-                        )
+                        .height(rowHeight)
+                        .padding(horizontal = 8.dp)
                         .clickable {
-                            navController.navigate(
-                                Route.EVENT_BY_OBJECT.setObject(event)
-                            )
-                        }
+                            onClick(event)
+                        },
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column(
                         Modifier
@@ -170,7 +162,9 @@ fun EventDayScreen(
                             fontSize = 16.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface,
-                        )
+                        ),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
@@ -247,7 +241,7 @@ fun EventScreen(event: Event, viewModel: AppViewModel) {
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = event.host ?: "-",
+                text = event.host?.toString() ?: "",
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
@@ -269,19 +263,10 @@ fun EventScreen(event: Event, viewModel: AppViewModel) {
                 .fillMaxWidth()
         ) {
             Text(
-                text = stringResource(R.string.available_places),
+                text = stringResource(R.string.available_places, event.currentParticipants, event.maxParticipants),
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "${event.currentParticipants}/${event.maxParticipants}",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
                     color = MaterialTheme.colorScheme.onSurface,
                 ),
             )
@@ -289,43 +274,18 @@ fun EventScreen(event: Event, viewModel: AppViewModel) {
             Spacer(modifier = Modifier.weight(1f))
 
             if (isLoggedIn.value) {
+                val enabled = event.currentParticipants < event.maxParticipants
                 GrayButton(
                     text = stringResource(R.string.sign_up),
-                    onClick = {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.operation_unavailable),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                )
+                    enabled = enabled,
+                ) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.operation_unavailable),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
-    }
-}
-
-@Composable
-fun GrayButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Button(
-        onClick = onClick,
-        modifier = modifier,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFE0E0E0),
-            contentColor = Color.Black
-        ),
-        shape = RoundedCornerShape(12.dp),
-        elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 2.dp,
-            pressedElevation = 6.dp
-        )
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.labelLarge
-        )
     }
 }

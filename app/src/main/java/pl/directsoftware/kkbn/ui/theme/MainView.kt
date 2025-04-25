@@ -2,28 +2,19 @@ package pl.directsoftware.kkbn.ui.theme
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ManageAccounts
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -40,47 +31,35 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.NonRestartableComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import pl.directsoftware.kkbn.AppViewModel
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.api.data.Event
+import pl.directsoftware.kkbn.api.data.EventHost
 import pl.directsoftware.kkbn.api.data.Exhibitor
 import pl.directsoftware.kkbn.api.data.Partner
-import pl.directsoftware.kkbn.common.HtmlData
 import pl.directsoftware.kkbn.common.Route
 import pl.directsoftware.kkbn.utils.Consts.TRANSITION_TIME
 import pl.directsoftware.kkbn.utils.Logger
+import pl.directsoftware.kkbn.utils.Notification
 
 private val logger = Logger("MainView")
 
@@ -99,9 +78,7 @@ fun MainScreen(viewModel: AppViewModel) {
     val isChildrenRoute = Route.isNested(navBackStackEntry?.destination?.route)
 
     viewModel.onRefresh = {
-        logger.debug("kliknąłem sobie żeby odświeżyło")
-        runBlocking { delay(2000) }
-        logger.debug("po delay-u")
+        // todo
     }
 
     Box(
@@ -282,89 +259,6 @@ fun DrawerContent(
 }
 
 @Composable
-fun HtmlContent(
-    htmlData: HtmlData,
-) {
-    if (!htmlData.isEmpty()) {
-        for ((index, part) in htmlData.parts.withIndex()) {
-            if (part.isNotEmpty()) {
-                Text(
-                    text = part,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Start
-                )
-            }
-            if (index < htmlData.matches.size) {
-                val bitmap = htmlData.bitmapList[index]
-                NetworkImage(
-                    image = bitmap,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                )
-            }
-        }
-    }
-}
-
-@Composable
-@NonRestartableComposable
-fun NetworkImage(image: ImageBitmap?, modifier: Modifier = Modifier) {
-    image?.let {
-        Image(bitmap = it, contentDescription = null, modifier = modifier)
-    }
-}
-
-@Composable
-fun ImageWithText(painter: Painter, text: String, contentDescription: String) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
-    ) {
-        Image(
-            painter = painter,
-            contentDescription = contentDescription,
-            modifier = Modifier.fillMaxSize(),
-            contentScale = ContentScale.Crop
-        )
-        TextWithShadow(
-            text = text,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(4.dp)
-        )
-    }
-}
-
-@Composable
-fun TextWithShadow(
-    text: String,
-    modifier: Modifier
-) {
-    Text(
-        text = text,
-        textAlign = TextAlign.Center,
-        color = Color.DarkGray,
-        modifier = modifier
-            .fillMaxWidth()
-            .offset(
-                x = 2.dp,
-                y = 2.dp
-            )
-            .alpha(0.75f),
-        fontSize = 24.sp
-    )
-    Text(
-        text = text,
-        textAlign = TextAlign.Center,
-        color = Color.White,
-        modifier = modifier,
-        fontSize = 24.sp
-    )
-}
-
-@Composable
 fun GoToRoute(
     route: Route,
     backStackEntry: NavBackStackEntry,
@@ -375,44 +269,80 @@ fun GoToRoute(
 
     when (route) {
         Route.AGENDA -> AgendaScreen(
-            navController
+            loadData = {
+                viewModel.getAgendaEvents()
+            },
+            onClick = {
+                navController.navigate(Route.EVENT_BY_OBJECT.setObject(it))
+            }
         )
-        Route.NEWS -> NewsScreen(viewModel, navController)
-        Route.NEWS_BY_ID -> {
-            NewsByIdScreen(
-                navController = navController,
-                id = backStackEntry.arguments?.getString("id")?.toIntOrNull()!!
-            )
-        }
+
+        Route.NEWS -> NewsScreen(
+            loadData = {
+                viewModel.getNews()
+            },
+            onClick = {
+                navController.navigate(Route.NEWS_BY_ID.setId(it.id))
+            }
+        )
+
+        Route.NEWS_BY_ID -> NewsByIdScreen(
+            onLoad = {
+                val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()!!
+                viewModel.getNews(id)
+            },
+        )
+
         Route.COMMITTEE -> CommitteeScreen(
-            navController,
+            loadData = {
+                viewModel.getCommittee()
+            }
         )
-        Route.PARTNERS -> PartnersScreen(navController)
+
+        Route.PARTNERS -> PartnersScreen(
+            loadData = {
+                viewModel.getPartners()
+            },
+            onClick = {
+                navController.navigate(Route.PARTNERS_BY_OBJECT.setObject(it))
+            }
+        )
+
         Route.PARTNERS_BY_OBJECT -> {
             val serialized = backStackEntry.arguments?.getString("object")
             val partner = Partner.restore(serialized) ?: return
             PartnerScreen(
-                navController = navController,
                 partner = partner
             )
         }
-        Route.EXHIBITORS -> ExhibitorsScreen(navController)
+
+        Route.EXHIBITORS -> ExhibitorsScreen(
+            navController,
+            onClick = {
+                navController.navigate(Route.PARTNERS_BY_OBJECT.setObject(it))
+            }
+        )
+
         Route.EXHIBITORS_BY_OBJECT -> {
             val serialized = backStackEntry.arguments?.getString("object")
             val exhibitor = Exhibitor.restore(serialized) ?: return
             ExhibitorScreen(
-                navController,
                 exhibitor
             )
         }
+
         Route.PLACE -> PlaceScreen()
+
         Route.CONTACT -> ContactScreen()
+
         Route.DOWNLOADS -> DownloadsScreen()
+
         Route.EVENT_BY_OBJECT -> {
             val serialized = backStackEntry.arguments?.getString("object")
             val event = Event.restore(serialized) ?: return
             EventScreen(event, viewModel)
         }
+
         Route.LOGIN -> {
             LoginScreen(
                 onLoginClick = { email, token ->
@@ -437,33 +367,46 @@ fun GoToRoute(
 
         Route.MY_ACCOUNT -> MyAccountScreen(viewModel, navController)
 
-        Route.EVENT_MANAGEMENT -> EventManagementScreen(viewModel)
-        Route.PARTICIPANTS_MANAGEMENT -> ParticipantManagementScreen(viewModel)
-        Route.HOST_MANAGEMENT -> HostManagementScreen(viewModel)
-    }
-}
-
-@Composable
-fun SyncButton(viewModel: AppViewModel) {
-    var rotation by remember { mutableFloatStateOf(0f) }
-
-    val animatedRotation by animateFloatAsState(
-        targetValue = rotation,
-        animationSpec = tween(durationMillis = 1000, easing = LinearEasing),
-        label = ""
-    )
-
-    Icon(
-        imageVector = Icons.Default.Sync,
-        contentDescription = null,
-        modifier = Modifier
-            .rotate(animatedRotation)
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() }
-            ) {
-                rotation += 360f
-                viewModel.refresh()
+        Route.EVENT_MANAGEMENT -> EventManagementScreen(
+            onFetch = {
+                viewModel.getEvents()
+            },
+            goTo = {
+                navController.navigate(
+                    Route.EVENT_MANAGEMENT_BY_OBJECT.setObject(it)
+                )
             }
-    )
+        )
+
+        Route.EVENT_MANAGEMENT_BY_OBJECT -> {
+            val serialized = backStackEntry.arguments?.getString("object")
+            val event = Event.restore(serialized) ?: return
+            EventManagementScreen(
+                event,
+                loadHostList = {
+                    viewModel.getEventHostMap()
+                },
+                onBack = {
+                    navController.popBackStack()
+                },
+                onSave = {
+                    val response = viewModel.updateEvent(it)
+                    Notification.toast(response != null)
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        Route.PARTICIPANTS_MANAGEMENT -> ParticipantManagementScreen(viewModel, navController)
+
+        Route.PARTICIPANTS_MANAGEMENT_BY_OBJECT -> {
+            val serialized = backStackEntry.arguments?.getString("object")
+            val participant = EventHost.restore(serialized) ?: return
+            ParticipantManagementScreen(participant, navController) {
+                logger.debug("save participant")
+            }
+        }
+
+        Route.HOST_MANAGEMENT -> HostManagementScreen(viewModel, navController)
+    }
 }
