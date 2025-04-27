@@ -56,19 +56,23 @@ class AppViewModel @Inject constructor(
 
     init {
         try {
-            val token = runBlocking { Settings.readString(Setting.BEARER_TOKEN) }
-            if (!token.isNullOrEmpty()) {
-                ApiPrivateClient.init(token)
+            val bearerToken = runBlocking { Settings.readString(Setting.BEARER_TOKEN) }
+            if (!bearerToken.isNullOrEmpty()) {
+                logger.info("Bearer token exists, attempting to connect to secured API.")
+                ApiPrivateClient.init(bearerToken)
                 if (ApiPrivateClient.ping()) {
-                    runBlocking {
-                        val email = Settings.readString(Setting.USERNAME)
-                        val memberId = Settings.readInt(Setting.MEMBER_ID)
-                        val memberType = EventMemberType.fromInt(Settings.readInt(Setting.MEMBER_TYPE)) //EventMemberType.MANAGEMENT todo EventMemberType.fromInt(Settings.readInt(Setting.MEMBER_TYPE))
-                        SessionManager.authorize(email!!, memberType, memberId)
+                    val profile = runBlocking { getProfile() }
+                    if (profile != null) {
+                        runBlocking {
+                            val email = Settings.readString(Setting.USERNAME)
+                            val memberId = Settings.readInt(Setting.MEMBER_ID)
+                            val memberType = EventMemberType.fromInt(Settings.readInt(Setting.MEMBER_TYPE))
+                            SessionManager.authorize(email!!, memberType, memberId)
+                        }
+                        _isLoggedIn.value = true
+                        logger.info("Auto-login completed successfully")
                     }
-                    _isLoggedIn.value = true
-                    logger.debug("Automatyczna autentykacja zakończona powodzeniem")
-                }
+                } else logger.info("Auto-login failed")
             }
         } catch (e: Exception) {
             logger.methodException("init", e)
@@ -112,6 +116,7 @@ class AppViewModel @Inject constructor(
             Settings.writeInt(Setting.MEMBER_TYPE, EventMemberType.ANONYMOUS.code)
             Settings.writeInt(Setting.MEMBER_ID, -1)
             SessionManager.destroy()
+            ApiPrivateClient.init(null)
         }
 
         _isLoggedIn.value = false

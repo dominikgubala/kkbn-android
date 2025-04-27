@@ -17,23 +17,17 @@ object ApiPrivateClient {
 
     private val client: OkHttpClient
         get() = OkHttpClient.Builder()
-            //.cache(cache)
             .addInterceptor(AuthInterceptor(bearerToken ?: BASE_TOKEN))
-            //.addInterceptor(CacheInterceptor())
-            //.addNetworkInterceptor(CacheInterceptor())
             .build()
 
-    val apiService: ApiPrivateService by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(ApiPrivateService::class.java)
-    }
+    private var _apiService: ApiPrivateService = createApiService()
 
-    fun init(bearerToken: String) {
-        this.bearerToken = bearerToken
+    val apiService: ApiPrivateService
+        get() = _apiService
+
+    fun init(token: String?) {
+        bearerToken = token
+        _apiService = createApiService()
     }
 
     fun ping(): Boolean {
@@ -47,5 +41,12 @@ object ApiPrivateClient {
         }
     }
 
-
+    private fun createApiService(): ApiPrivateService {
+        return Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(client)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(ApiPrivateService::class.java)
+    }
 }
