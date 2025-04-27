@@ -1,5 +1,7 @@
 package pl.directsoftware.kkbn.api.data
 
+import androidx.compose.ui.graphics.ImageBitmap
+
 data class Place(
     val name: String,
     val street: String,
@@ -11,4 +13,6 @@ data class Place(
     val image: String,
     val url: String,
     val mapUrl: String,
-)
+) {
+    var bitmap: ImageBitmap? = null
+}

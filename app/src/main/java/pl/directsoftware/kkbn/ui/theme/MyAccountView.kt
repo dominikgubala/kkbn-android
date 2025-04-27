@@ -7,6 +7,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Event
 import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -29,6 +30,12 @@ fun MyAccountScreen(
     Column(
         modifier = Modifier.padding(horizontal = 16.dp)
     ) {
+
+        AccountOptionItem(R.string.title_your_data, Icons.Default.Info) {
+            goTo(Route.YOUR_DATA)
+        }
+        HorizontalDivider(thickness = 1.dp)
+
         if (SessionManager.isGranted(MemberRole.EDIT_PARTICIPANT)) {
             AccountOptionItem(R.string.title_event_management, Icons.Default.Event) {
                 goTo(Route.EVENT_MANAGEMENT)

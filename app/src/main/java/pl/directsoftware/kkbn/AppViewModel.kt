@@ -10,24 +10,35 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import pl.directsoftware.kkbn.api.ApiPrivateClient
 import pl.directsoftware.kkbn.api.data.Committee
+import pl.directsoftware.kkbn.api.data.Contact
+import pl.directsoftware.kkbn.api.data.Download
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventDay
 import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.api.data.Exhibitor
 import pl.directsoftware.kkbn.api.data.News
 import pl.directsoftware.kkbn.api.data.Partner
+import pl.directsoftware.kkbn.api.data.Place
+import pl.directsoftware.kkbn.api.data.Profile
 import pl.directsoftware.kkbn.auth.EventMemberType
 import pl.directsoftware.kkbn.defs.Setting
 import pl.directsoftware.kkbn.repository.AgendaRepository
 import pl.directsoftware.kkbn.repository.CommitteeRepository
 import pl.directsoftware.kkbn.repository.CommonRepository
+import pl.directsoftware.kkbn.repository.ContactRepository
+import pl.directsoftware.kkbn.repository.DownloadRepository
 import pl.directsoftware.kkbn.repository.EventMemberRepository
 import pl.directsoftware.kkbn.repository.EventRepository
+import pl.directsoftware.kkbn.repository.ExhibitorRepository
 import pl.directsoftware.kkbn.repository.NewsRepository
 import pl.directsoftware.kkbn.repository.PartnerRepository
+import pl.directsoftware.kkbn.repository.PlaceRepository
+import pl.directsoftware.kkbn.repository.ProfileRepository
 import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 import pl.directsoftware.kkbn.utils.Logger
 import pl.directsoftware.kkbn.utils.SessionManager
 import pl.directsoftware.kkbn.utils.Settings
+import retrofit2.HttpException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -114,11 +125,11 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun getNews(): List<News>? {
+    suspend fun getNews(): List<News>? {
         try {
             val newsList = NewsRepository.getNews()
             newsList?.forEach { news ->
-                news.bitmap = runBlocking { loadImageFromUrl("https://kkbn.pl/${news.imagePath}") }
+                news.bitmap = loadImageFromUrl("https://kkbn.pl/${news.imagePath}")
             }
             return newsList
         } catch (e: Exception) {
@@ -127,7 +138,7 @@ class AppViewModel @Inject constructor(
         return null
     }
 
-    fun getNews(id: Int): News? {
+    suspend fun getNews(id: Int): News? {
         try {
             return NewsRepository.getNewsById(id)
         } catch (e: Exception) {
@@ -136,7 +147,7 @@ class AppViewModel @Inject constructor(
         return null
     }
 
-    fun getAgendaEvents(): List<EventDay>? {
+    suspend fun getAgendaEvents(): List<EventDay>? {
         try {
             return AgendaRepository.getEvents()
         } catch (e: Exception) {
@@ -145,7 +156,7 @@ class AppViewModel @Inject constructor(
         return null
     }
 
-    fun getCommittee(): List<Committee>? {
+    suspend fun getCommittee(): List<Committee>? {
         try {
             return CommitteeRepository.getCommittee()
         } catch (e: Exception) {
@@ -154,11 +165,70 @@ class AppViewModel @Inject constructor(
         return null
     }
 
-    fun getPartners(): List<Partner>? {
+    suspend fun getPartners(): List<Partner>? {
         try {
             return PartnerRepository.getPartners()
         } catch (e: Exception) {
             logger.methodException("getPartners", e)
+        }
+        return null
+    }
+
+    suspend fun getExhibitors(): List<Exhibitor>? {
+        try {
+            return ExhibitorRepository.getExhibitors()
+        } catch (e: Exception) {
+            logger.methodException("getExhibitors", e)
+        }
+        return null
+    }
+
+    suspend fun getPlace(): Place? {
+        try {
+            val place = PlaceRepository.getPlace() ?: return null
+            place.bitmap = loadImageFromUrl("https://kkbn.pl/${place.image}")
+            return place
+        } catch (e: Exception) {
+            logger.methodException("getPlace", e)
+        }
+        return null
+    }
+
+    suspend fun getContacts(): List<Contact>? {
+        try {
+            return ContactRepository.getContacts()
+        } catch (e: Exception) {
+            logger.methodException("getContacts", e)
+        }
+        return null
+    }
+
+    suspend fun getDownloads(): List<Download>? {
+        try {
+            val d = DownloadRepository.getDownloads()
+            if (d != null) {
+                for (download in d) {
+                    logger.debug("plik ${download.name}, typ: ${download.type}")
+                }
+            }
+            return d
+        } catch (e: Exception) {
+            logger.methodException("getDownloads", e)
+        }
+        return null
+    }
+
+    suspend fun getProfile(): Profile? {
+        try {
+            return ProfileRepository.getProfile()
+        } catch (e: HttpException) {
+            logger.methodException("getProfile", e)
+            if (e.code() == 401) {
+                logger.info("Forced logout due to HTTP 401 error")
+                logout()
+            }
+        } catch (e: Exception) {
+            logger.methodException("getProfile", e)
         }
         return null
     }
@@ -209,6 +279,17 @@ class AppViewModel @Inject constructor(
         memberId: Int,
     ): Event? {
         return EventRepository.registerParticipant(eventId, memberId)
+    }
+
+    fun unregisterParticipant(
+        eventId: Int,
+        memberId: Int,
+    ): Event? {
+        return EventRepository.unregisterParticipant(eventId, memberId)
+    }
+
+    suspend fun isParticipantRegistered(eventId: Int): Boolean {
+        return EventMemberRepository.isRegistered(eventId)
     }
 
     fun updateEventHost(

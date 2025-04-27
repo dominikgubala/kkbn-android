@@ -26,7 +26,7 @@ import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 
 @Composable
 fun CommitteeScreen(
-    loadData: () -> List<Committee>?
+    loadData: suspend () -> List<Committee>?
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val avatarList = remember { mutableMapOf<Committee,ImageBitmap?>() }

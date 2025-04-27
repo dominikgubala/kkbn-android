@@ -13,6 +13,7 @@ import pl.directsoftware.kkbn.api.response.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Path
 
@@ -42,6 +43,7 @@ interface ApiService {
     @GET("contacts")
     suspend fun getContacts(): Response<List<Contact>>
 
+    @Headers("Cache-Control: no-cache")
     @GET("agenda")
     suspend fun getAgenda(): Response<List<EventDay>>
 

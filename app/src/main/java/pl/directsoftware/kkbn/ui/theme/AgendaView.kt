@@ -1,9 +1,11 @@
 package pl.directsoftware.kkbn.ui.theme
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -48,8 +51,8 @@ import pl.directsoftware.kkbn.api.data.EventDay
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgendaScreen(
-    loadData: () -> List<EventDay>?,
-    onClick: (Event) -> Unit = {},
+    loadData: suspend () -> List<EventDay>?,
+    goToEvent: (Event) -> Unit = {},
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val events = remember { mutableStateOf<List<EventDay>?>(null) }
@@ -60,7 +63,9 @@ fun AgendaScreen(
     }
 
     if (isLoading.value) {
-        ProgressIndicator()
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
     } else {
         if (events.value == null) return
 
@@ -104,9 +109,12 @@ fun AgendaScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            EventDayScreen(selectedFilter) {
-                onClick(it)
-            }
+            EventDayScreen(
+                day = selectedFilter,
+                onClick = {
+                    goToEvent(it)
+                }
+            )
         }
     }
 }
@@ -181,107 +189,128 @@ fun EventDayScreen(
 fun EventScreen(
     event: Event,
     isLoggedIn: StateFlow<Boolean>,
-    onRegister: (Int) -> Unit = {},
+    isRegistered: suspend () -> Boolean,
+    onRegister: (Int) -> Unit,
+    onUnregister: (Int) -> Unit,
 ) {
+    val isLoading = remember { mutableStateOf(true) }
+    val registered = remember { mutableStateOf(false) }
     val isLogged = isLoggedIn.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Text(
-            text = event.title,
-            style = TextStyle(
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
-            ),
-            modifier = Modifier
-                .padding(4.dp)
-        )
-        Spacer(modifier = Modifier.width(4.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(4.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.DateRange,
-                contentDescription = null,
-                modifier = Modifier
-                    .size(14.dp),
-                tint = Color.Gray
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = "${event.dateTimeBegin} - ${event.dateTimeEnd}, ${event.getDuration()}",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Gray,
-                ),
-            )
-        }
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-        )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(4.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.label_host),
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = event.host?.toString() ?: "",
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-            )
-        }
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
-            thickness = 1.dp,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-        )
-        val context = LocalContext.current
+    LaunchedEffect(EventDay::class) {
+        registered.value = isRegistered()
+        isLoading.value = false
+    }
 
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
+    if (isLoading.value) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+    } else {
+        Column(
             modifier = Modifier
-                .padding(4.dp)
                 .fillMaxWidth()
+                .padding(8.dp)
         ) {
             Text(
-                text = stringResource(R.string.available_places, event.maxParticipants - event.currentParticipants, event.maxParticipants),
+                text = event.title,
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface,
                 ),
+                modifier = Modifier
+                    .padding(4.dp)
             )
+            Spacer(modifier = Modifier.width(4.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(4.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.DateRange,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(14.dp),
+                    tint = Color.Gray
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "${event.dateTimeBegin} - ${event.dateTimeEnd}, ${event.getDuration()}",
+                    style = TextStyle(
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.Gray,
+                    ),
+                )
+            }
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.label_host),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = event.host?.toString() ?: "",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Normal,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                )
+            }
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+            )
+            val context = LocalContext.current
 
-            Spacer(modifier = Modifier.weight(1f))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    text = stringResource(R.string.available_places, event.maxParticipants - event.currentParticipants, event.maxParticipants),
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    ),
+                )
 
-            if (isLogged.value) {
-                val enabled = event.currentParticipants < event.maxParticipants
-                GrayButton(
-                    text = stringResource(R.string.sign_up),
-                    enabled = enabled,
-                ) {
-                    onRegister(event.id)
+                Spacer(modifier = Modifier.weight(1f))
+
+                if (isLogged.value) {
+                    val enabled = (event.currentParticipants < event.maxParticipants && !registered.value) || registered.value
+                    val message = if (registered.value) R.string.withdraw else R.string.sign_up
+                    GrayButton(
+                        text = stringResource(message),
+                        enabled = enabled,
+                        loader = true,
+                        onClick = {
+                            if (registered.value)
+                                onUnregister(event.id)
+                            else
+                                onRegister(event.id)
+                        }
+                    )
                 }
             }
         }

@@ -12,6 +12,7 @@ data class Event(
     val id: Int,
     val title: String,
     val speaker: String?,
+    val date: String?,
     val dateTimeBegin: String?,
     val dateTimeEnd: String?,
     val host: EventHost?,
@@ -55,6 +56,7 @@ data class Event(
             put("id", id)
             put("title", title)
             put("speaker", speaker)
+            put("date", date)
             put("dateTimeBegin", dateTimeBegin)
             put("dateTimeEnd", dateTimeEnd)
             put("host", host?.toJSONObject())
@@ -74,6 +76,7 @@ data class Event(
                     json.getInt("id"),
                     json.optString("title"),
                     json.opt("speaker")?.toString(),
+                    json.opt("date")?.toString(),
                     json.opt("dateTimeBegin")?.toString(),
                     json.opt("dateTimeEnd")?.toString(),
                     EventHost.fromJson(json.optJSONObject("host")),

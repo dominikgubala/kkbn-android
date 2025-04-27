@@ -17,6 +17,7 @@
     <string name="title_event_management">Event Management</string>
     <string name="title_participant_management">Participant Management</string>
     <string name="title_host_management">Host Management</string>
+    <string name="title_your_data">Your data</string>
 
     <string name="visit_partner_site">Visit the partner site</string>
     <string name="visit_exhibitor_site">Visit the exhibitor site</string>
@@ -24,12 +25,15 @@
     <string name="label_host">Host: </string>
     <string name="available_places">Available places: %d/%d</string>
     <string name="sign_up">Sign up</string>
+    <string name="signed_up">Signed up</string>
     <string name="operation_unavailable">Cannot perform this operation</string>
     <string name="email_address">E-mail</string>
     <string name="code_token">6-character code</string>
     <string name="login">Login</string>
     <string name="auth_error">An error occurred during authentication</string>
     <string name="logged_in">Logged in</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="withdraw">Withdraw</string>
 
     <string name="edit_event">Edit Event</string>
     <string name="edit_participant">Edit Participant</string>
@@ -43,6 +47,10 @@
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="label_full_name">Full name</string>
+
+    <string name="full_name">Full name</string>
+    <string name="company">Company</string>
+    <string name="workshops">Workshops</string>
 
     <string name="saved_successfully">Saved successfully</string>
     <string name="save_error">An error occurred while saving. Please try again</string>

@@ -64,4 +64,21 @@ object EventRepository : AbstractRepository() {
         return null
     }
 
+    fun unregisterParticipant(eventId: Int, memberId: Int): Event? {
+        try {
+            val events = runBlocking { privateService.unregisterParticipant(
+                eventId,
+                memberId,
+            ) }
+            if (!events.success) {
+                logger.methodError("registerParticipant($eventId,$memberId)", events.errors?.firstOrNull() ?: "unknown")
+                return null
+            }
+            return events.data
+        } catch (e: Exception) {
+            logger.methodException("registerParticipant($eventId,$memberId)", e)
+        }
+        return null
+    }
+
 }

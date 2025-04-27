@@ -2,6 +2,7 @@ package pl.directsoftware.kkbn.api.http
 
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.api.data.Profile
 import pl.directsoftware.kkbn.api.response.Response
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -42,6 +43,13 @@ interface ApiPrivateService {
     ): Response<Event?>
 
     @FormUrlEncoded
+    @POST("events/{id}/unregister")
+    suspend fun unregisterParticipant(
+        @Path("id") id: Int,
+        @Field("memberId") memberId: Int,
+    ): Response<Event?>
+
+    @FormUrlEncoded
     @POST("event-hosts/{id}")
     suspend fun updateEventHost(
         @Path("id") id: Int,
@@ -54,4 +62,12 @@ interface ApiPrivateService {
         @Path("id") id: Int,
         @Field("active") title: Boolean,
     ): Response<EventHost?>
+
+    @GET("profile/participant-events/{eventId}/is-registered")
+    suspend fun isRegistered(
+        @Path("eventId") eventId: Int
+    ): Response<Map<String,Boolean>>
+
+    @GET("profile")
+    suspend fun getProfile(): Response<Profile>
 }

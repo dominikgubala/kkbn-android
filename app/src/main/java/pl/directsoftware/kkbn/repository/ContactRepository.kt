@@ -1,6 +1,5 @@
 package pl.directsoftware.kkbn.repository
 
-import kotlinx.coroutines.runBlocking
 import pl.directsoftware.kkbn.api.data.Contact
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
@@ -9,8 +8,8 @@ object ContactRepository : AbstractRepository() {
 
     private val logger = Logger(ContactRepository::class.java.simpleName)
 
-    fun getContacts(): List<Contact>? {
-        val downloads = runBlocking { service.getContacts() }
+    suspend fun getContacts(): List<Contact>? {
+        val downloads = service.getContacts()
         if (!downloads.success) {
             logger.methodError("getContacts", downloads.errors?.firstOrNull() ?: "unknown")
             return null

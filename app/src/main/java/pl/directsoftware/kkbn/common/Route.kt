@@ -37,6 +37,7 @@ enum class Route(
     EVENT_BY_OBJECT("event/{object}", R.string.title_agenda, false, Icons.Default.Event),
     LOGIN("login", R.string.title_login, true, Icons.AutoMirrored.Filled.Login),
     MY_ACCOUNT("my-account", R.string.title_my_account, true, Icons.Default.AccountCircle),
+    YOUR_DATA("your-data", R.string.title_your_data, false, Icons.Default.Info),
 
     EVENT_MANAGEMENT("event-management$", R.string.title_event_management, false, Icons.Default.Info),
     EVENT_MANAGEMENT_BY_OBJECT("event-management/{object}", R.string.title_event_management, false, Icons.Default.Info),

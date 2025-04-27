@@ -1,5 +1,7 @@
 package pl.directsoftware.kkbn.ui.theme
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
@@ -57,6 +59,8 @@ import pl.directsoftware.kkbn.api.data.EventHost
 import pl.directsoftware.kkbn.api.data.Exhibitor
 import pl.directsoftware.kkbn.api.data.Partner
 import pl.directsoftware.kkbn.common.Route
+import pl.directsoftware.kkbn.repository.DownloadRepository
+import pl.directsoftware.kkbn.repository.PlaceRepository
 import pl.directsoftware.kkbn.utils.Consts.TRANSITION_TIME
 import pl.directsoftware.kkbn.utils.Logger
 import pl.directsoftware.kkbn.utils.Notification
@@ -273,7 +277,7 @@ fun GoToRoute(
             loadData = {
                 viewModel.getAgendaEvents()
             },
-            onClick = {
+            goToEvent = {
                 navController.navigate(Route.EVENT_BY_OBJECT.setObject(it))
             }
         )
@@ -318,7 +322,9 @@ fun GoToRoute(
         }
 
         Route.EXHIBITORS -> ExhibitorsScreen(
-            navController,
+            loadData = {
+                viewModel.getExhibitors()
+            },
             onClick = {
                 navController.navigate(Route.PARTNERS_BY_OBJECT.setObject(it))
             }
@@ -332,11 +338,30 @@ fun GoToRoute(
             )
         }
 
-        Route.PLACE -> PlaceScreen()
+        Route.PLACE -> PlaceScreen(
+            loadData = {
+                viewModel.getPlace()
+            }
+        )
 
-        Route.CONTACT -> ContactScreen()
+        Route.CONTACT -> ContactScreen(
+            loadData = {
+                viewModel.getContacts()
+            }
+        )
 
-        Route.DOWNLOADS -> DownloadsScreen()
+        Route.DOWNLOADS -> DownloadsScreen(
+            loadData = {
+                viewModel.getDownloads()
+            },
+            onOpen = { url ->
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://kkbn.pl/${url}")
+                )
+                context.startActivity(intent)
+            }
+        )
 
         Route.EVENT_BY_OBJECT -> {
             val serialized = backStackEntry.arguments?.getString("object")
@@ -344,9 +369,18 @@ fun GoToRoute(
             EventScreen(
                 event,
                 viewModel.isLoggedIn,
+                isRegistered = {
+                    viewModel.isParticipantRegistered(event.id)
+                },
                 onRegister = { eventId ->
                     val memberId = SessionManager.memberId ?: -1
                     val response = viewModel.registerParticipant(eventId, memberId)
+                    Notification.toast(response != null)
+                    navController.popBackStack()
+                },
+                onUnregister = { eventId ->
+                    val memberId = SessionManager.memberId ?: -1
+                    val response = viewModel.unregisterParticipant(eventId, memberId)
                     Notification.toast(response != null)
                     navController.popBackStack()
                 }
@@ -382,6 +416,12 @@ fun GoToRoute(
             onLogout = {
                 viewModel.logout()
                 navController.navigate(Route.NEWS.type)
+            }
+        )
+
+        Route.YOUR_DATA -> YourDataScreen(
+            loadData = {
+                viewModel.getProfile()
             }
         )
 

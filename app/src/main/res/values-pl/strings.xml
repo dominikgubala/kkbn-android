@@ -17,6 +17,7 @@
     <string name="title_event_management">Zarządzanie warsztatami</string>
     <string name="title_participant_management">Zarządzanie uczestnikami</string>
     <string name="title_host_management">Zarządzanie prowadzącymi</string>
+    <string name="title_your_data">Twoje dane</string>
 
     <string name="visit_partner_site">Odwiedź stronę partnera</string>
     <string name="visit_exhibitor_site">Odwiedź stronę wystawcy</string>
@@ -24,12 +25,15 @@
     <string name="label_host">Prowadzący: </string>
     <string name="available_places">Dostępne miejsca: %d/%d</string>
     <string name="sign_up">Zapisz się</string>
+    <string name="signed_up">Zapisano</string>
     <string name="operation_unavailable">Nie można wykonać tej operacji</string>
     <string name="email_address">E-mail</string>
     <string name="code_token">6-znakowy kod</string>
     <string name="login">Zaloguj</string>
     <string name="auth_error">Wystąpił błąd podczas autentykacji</string>
     <string name="logged_in">Zalogowano</string>
+    <string name="please_wait">Proszę czekać…</string>
+    <string name="withdraw">Zrezygnuj</string>
 
     <string name="edit_event">Edycja wydarzenia</string>
     <string name="edit_participant">Edycja uczestnika</string>
@@ -43,6 +47,10 @@
     <string name="cancel">Anuluj</string>
     <string name="save">Zapisz</string>
     <string name="label_full_name">Nazwa</string>
+
+    <string name="full_name">Imię i nazwisko</string>
+    <string name="company">Firma</string>
+    <string name="workshops">Warsztaty</string>
 
     <string name="saved_successfully">Zapisano pomyślnie</string>
     <string name="save_error">Wystąpił błąd podczas zapisywania. Proszę spróbować ponownie</string>

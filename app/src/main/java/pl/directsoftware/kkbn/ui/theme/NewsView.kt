@@ -38,7 +38,7 @@ import pl.directsoftware.kkbn.utils.FileHelper.loadImageFromUrl
 
 @Composable
 fun NewsScreen(
-    loadData: () -> List<News>?,
+    loadData: suspend () -> List<News>?,
     onClick: (News) -> Unit = {},
 ) {
     val isLoading = remember { mutableStateOf(true) }
@@ -93,7 +93,6 @@ fun NewsScreen(
                         thickness = 1.dp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                     )
-//                Spacer(modifier = Modifier.height(4.dp))
                 }
             }
         }
@@ -102,7 +101,7 @@ fun NewsScreen(
 
 @Composable
 fun NewsByIdScreen(
-    onLoad: () -> News?,
+    onLoad: suspend () -> News?,
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val news = remember { mutableStateOf<News?>(null) }

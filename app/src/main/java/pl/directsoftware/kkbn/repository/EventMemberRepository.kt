@@ -1,7 +1,6 @@
 package pl.directsoftware.kkbn.repository
 
 import kotlinx.coroutines.runBlocking
-import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventHost
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
@@ -62,6 +61,20 @@ object EventMemberRepository : AbstractRepository() {
             logger.methodException("updateEventHost(${participant.id})", e)
         }
         return null
+    }
+
+    suspend fun isRegistered(eventId: Int): Boolean {
+        try {
+            val events = privateService.isRegistered(eventId)
+            if (!events.success) {
+                logger.methodError("isRegistered($eventId)", events.errors?.firstOrNull() ?: "unknown")
+                return false
+            }
+            return events.data?.getOrDefault("registered", false) ?: false
+        } catch (e: Exception) {
+            logger.methodException("isRegistered($eventId)", e)
+        }
+        return false
     }
 
 }
