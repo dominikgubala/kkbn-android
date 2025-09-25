@@ -20,9 +20,9 @@ android {
     defaultConfig {
         applicationId = "pl.directsoftware.kkbn"
         minSdk = 27
-        targetSdk = 34
-        versionCode = 2
-        versionName = "0.0.2"
+        targetSdk = 35
+        versionCode = 101
+        versionName = "1.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

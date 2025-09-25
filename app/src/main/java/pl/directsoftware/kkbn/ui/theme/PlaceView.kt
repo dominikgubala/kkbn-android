@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -32,7 +34,8 @@ import pl.directsoftware.kkbn.api.data.Place
 
 @Composable
 fun PlaceScreen(
-    loadData: suspend () -> Place?
+    loadData: suspend () -> Place?,
+    onOpen: (String) -> Unit = {}
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val hotel = remember { mutableStateOf<Place?>(null) }
@@ -142,6 +145,26 @@ fun PlaceScreen(
                             text = email,
                             style = MaterialTheme.typography.bodyMedium,
                         )
+                    }
+                }
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(onClick = {
+                        onOpen("https://kkbn.pl/uploads/PLAN%20HOTELU.pdf")
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Map,
+                            contentDescription = "Map",
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Plan hotelu")
                     }
                 }
             }

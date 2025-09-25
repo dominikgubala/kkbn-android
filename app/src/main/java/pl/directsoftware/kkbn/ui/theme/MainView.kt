@@ -341,6 +341,13 @@ fun GoToRoute(
         Route.PLACE -> PlaceScreen(
             loadData = {
                 viewModel.getPlace()
+            },
+            onOpen = { url ->
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(url)
+                )
+                context.startActivity(intent)
             }
         )
 
@@ -422,6 +429,11 @@ fun GoToRoute(
         Route.YOUR_DATA -> YourDataScreen(
             loadData = {
                 viewModel.getProfile()
+            },
+            goToEvent = {
+                navController.navigate(
+                    Route.EVENT_BY_OBJECT.setObject(it)
+                )
             }
         )
 

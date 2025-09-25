@@ -1,5 +1,6 @@
 package pl.directsoftware.kkbn.ui.theme
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,11 +25,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import pl.directsoftware.kkbn.R
+import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.Profile
 
 @Composable
 fun YourDataScreen(
-    loadData: suspend () -> Profile?
+    loadData: suspend () -> Profile?,
+    goToEvent: (Event) -> Unit = {},
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val profile = remember { mutableStateOf<Profile?>(null) }
@@ -107,6 +110,9 @@ fun YourDataScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp)
+                                    .clickable {
+                                        goToEvent(event)
+                                    }
                             ) {
                                 Text(
                                     text = event.title,

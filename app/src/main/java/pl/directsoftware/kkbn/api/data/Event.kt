@@ -18,6 +18,7 @@ data class Event(
     val host: EventHost?,
     val currentParticipants: Int,
     val maxParticipants: Int,
+    val longDescription: String?,
 ): ISerializable {
 
     fun getDuration(): String {
@@ -62,6 +63,7 @@ data class Event(
             put("host", host?.toJSONObject())
             put("currentParticipants", currentParticipants)
             put("maxParticipants", maxParticipants)
+            put("longDescription", longDescription)
         }
         return URLEncoder.encode(json.toString(), "UTF-8")
     }
@@ -82,6 +84,7 @@ data class Event(
                     EventHost.fromJson(json.optJSONObject("host")),
                     json.optInt("currentParticipants"),
                     json.optInt("maxParticipants"),
+                    json.optString("longDescription"),
                 )
             } catch (_: Exception) {
                 null

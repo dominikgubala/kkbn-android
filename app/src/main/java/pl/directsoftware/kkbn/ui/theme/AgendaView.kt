@@ -47,6 +47,7 @@ import kotlinx.coroutines.flow.StateFlow
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventDay
+import pl.directsoftware.kkbn.common.HtmlData
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -310,6 +311,23 @@ fun EventScreen(
                             else
                                 onRegister(event.id)
                         }
+                    )
+                }
+            }
+
+            if (isLogged.value && event.longDescription != null) {
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(4.dp)
+                ) {
+                    HtmlContent(
+                        HtmlData(event.longDescription)
                     )
                 }
             }
