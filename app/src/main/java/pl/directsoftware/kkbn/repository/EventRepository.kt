@@ -2,6 +2,7 @@ package pl.directsoftware.kkbn.repository
 
 import kotlinx.coroutines.runBlocking
 import pl.directsoftware.kkbn.api.data.Event
+import pl.directsoftware.kkbn.auth.EventMemberType
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
 
@@ -47,11 +48,12 @@ object EventRepository : AbstractRepository() {
         return events.data
     }
 
-    fun registerParticipant(eventId: Int, memberId: Int): Event? {
+    fun registerParticipant(eventId: Int, memberId: Int, memberType: EventMemberType): Event? {
         try {
             val events = runBlocking { privateService.registerParticipant(
                 eventId,
                 memberId,
+                memberType.code,
             ) }
             if (!events.success) {
                 logger.methodError("registerParticipant($eventId,$memberId)", events.errors?.firstOrNull() ?: "unknown")
@@ -64,11 +66,12 @@ object EventRepository : AbstractRepository() {
         return null
     }
 
-    fun unregisterParticipant(eventId: Int, memberId: Int): Event? {
+    fun unregisterParticipant(eventId: Int, memberId: Int, eventMember: EventMemberType): Event? {
         try {
             val events = runBlocking { privateService.unregisterParticipant(
                 eventId,
                 memberId,
+                eventMember.code,
             ) }
             if (!events.success) {
                 logger.methodError("registerParticipant($eventId,$memberId)", events.errors?.firstOrNull() ?: "unknown")
@@ -79,6 +82,22 @@ object EventRepository : AbstractRepository() {
             logger.methodException("registerParticipant($eventId,$memberId)", e)
         }
         return null
+    }
+
+    fun unregisterParticipantAsHost(eventId: Int, participantId: Int): Boolean {
+        try {
+            val events = runBlocking { privateService.unregisterParticipant(
+                eventId,
+                participantId,
+            ) }
+            if (!events.success) {
+                logger.methodError("registerParticipant($eventId,$participantId)", events.errors?.firstOrNull() ?: "unknown")
+            }
+            return events.data?.value ?: false
+        } catch (e: Exception) {
+            logger.methodException("registerParticipant($eventId,$participantId)", e)
+        }
+        return false
     }
 
 }

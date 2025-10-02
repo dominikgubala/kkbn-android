@@ -15,6 +15,9 @@ object Settings {
 
     private val Context.dataStore by preferencesDataStore(name = "settings")
 
+    var sessionToken: String = "1324354657687980"
+        private set
+
     private suspend fun write(key: Preferences.Key<String>, value: String) {
         App.context.dataStore.edit { preferences ->
             preferences[key] = value
@@ -41,5 +44,12 @@ object Settings {
 
     suspend fun readInt(setting: Setting): Int? {
         return read(stringPreferencesKey(setting.name)).first()?.toIntOrNull()
+    }
+
+    fun generateSessionToken() {
+        val allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+        sessionToken = (1..16)
+            .map { allowedChars.random() }
+            .joinToString("")
     }
 }

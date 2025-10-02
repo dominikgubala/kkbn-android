@@ -2,6 +2,7 @@ package pl.directsoftware.kkbn.repository
 
 import kotlinx.coroutines.runBlocking
 import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.api.data.EventParticipant
 import pl.directsoftware.kkbn.repository.base.AbstractRepository
 import pl.directsoftware.kkbn.utils.Logger
 
@@ -21,6 +22,16 @@ object EventMemberRepository : AbstractRepository() {
 
     fun getEventParticipants(): List<EventHost>? {
         val events = runBlocking { privateService.getEventParticipants() }
+        if (!events.success) {
+            logger.methodError("getEventParticipants", events.errors?.firstOrNull() ?: "unknown")
+            return null
+        }
+
+        return events.data
+    }
+
+    fun getEventParticipants(id: Int): List<EventParticipant>? {
+        val events = runBlocking { privateService.getEventParticipants(id) }
         if (!events.success) {
             logger.methodError("getEventParticipants", events.errors?.firstOrNull() ?: "unknown")
             return null

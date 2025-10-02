@@ -381,15 +381,24 @@ fun GoToRoute(
                 },
                 onRegister = { eventId ->
                     val memberId = SessionManager.memberId ?: -1
-                    val response = viewModel.registerParticipant(eventId, memberId)
+                    val memberType = SessionManager.memberType
+                    val response = viewModel.registerParticipant(eventId, memberId, memberType)
                     Notification.toast(response != null)
                     navController.popBackStack()
                 },
                 onUnregister = { eventId ->
                     val memberId = SessionManager.memberId ?: -1
-                    val response = viewModel.unregisterParticipant(eventId, memberId)
+                    val memberType = SessionManager.memberType
+                    val response = viewModel.unregisterParticipant(eventId, memberId, memberType)
                     Notification.toast(response != null)
                     navController.popBackStack()
+                },
+                loadParticipants = {
+                    viewModel.getEventParticipants(it)
+                },
+                onDeleteParticipant = { eventId, participantId ->
+                    logger.debug("delete: eventId($eventId), participantId($participantId)")
+                    viewModel.unregisterParticipant(eventId, participantId)
                 }
             )
         }

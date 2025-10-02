@@ -7,6 +7,7 @@ import java.net.URLEncoder
 
 data class EventHost(
     val id: Int,
+    val email: String?,
     val accessCode: String?,
     val companyName: String?,
     val firstName: String?,
@@ -15,11 +16,12 @@ data class EventHost(
     // todo: events
 ) : ISerializable {
 
-    constructor(id: Int) : this(id, null, null, null, null, false)
+    constructor(id: Int) : this(id, null, null, null, null, null, false)
 
     override fun toJSONObject(): JSONObject {
         return JSONObject().apply {
             put("id", id)
+            put("email", email)
             put("accessCode", accessCode)
             put("companyName", companyName)
             put("firstName", firstName)
@@ -44,6 +46,7 @@ data class EventHost(
                 val json = JSONObject(decoded)
                 EventHost(
                     json.getInt("id"),
+                    json.opt("email")?.toString(),
                     json.opt("accessCode")?.toString(),
                     json.opt("companyName")?.toString(),
                     json.opt("firstName")?.toString(),
@@ -60,6 +63,7 @@ data class EventHost(
                 if (json == null) return null
                 EventHost(
                     json.getInt("id"),
+                    json.opt("email")?.toString(),
                     json.opt("accessCode")?.toString(),
                     json.opt("companyName")?.toString(),
                     json.opt("firstName")?.toString(),

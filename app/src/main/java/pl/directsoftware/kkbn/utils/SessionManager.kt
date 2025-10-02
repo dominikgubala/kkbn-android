@@ -11,7 +11,8 @@ object SessionManager {
     var memberId: Int? = null
         private set
 
-    private var memberType: EventMemberType = EventMemberType.ANONYMOUS
+    var memberType: EventMemberType = EventMemberType.ANONYMOUS
+        private set
 
     fun authorize(identifier: String, memberType: EventMemberType, memberId: Int?) {
         this.identifier = identifier

@@ -1,6 +1,8 @@
 package pl.directsoftware.kkbn.ui.theme
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -30,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -47,7 +53,10 @@ import kotlinx.coroutines.flow.StateFlow
 import pl.directsoftware.kkbn.R
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventDay
+import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.api.data.EventParticipant
 import pl.directsoftware.kkbn.common.HtmlData
+import pl.directsoftware.kkbn.utils.SessionManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -193,13 +202,18 @@ fun EventScreen(
     isRegistered: suspend () -> Boolean,
     onRegister: (Int) -> Unit,
     onUnregister: (Int) -> Unit,
+    loadParticipants: (Int) -> List<EventParticipant>?,
+    onDeleteParticipant: (Int, Int) -> Boolean,
 ) {
     val isLoading = remember { mutableStateOf(true) }
     val registered = remember { mutableStateOf(false) }
+    val participants = remember { mutableStateListOf<EventParticipant>() }
     val isLogged = isLoggedIn.collectAsState()
+    val canRegister = event.host == null || event.host.email != SessionManager.identifier!!
 
     LaunchedEffect(EventDay::class) {
         registered.value = isRegistered()
+        loadParticipants(event.id)?.let { participants.addAll(it) }
         isLoading.value = false
     }
 
@@ -298,7 +312,7 @@ fun EventScreen(
 
                 Spacer(modifier = Modifier.weight(1f))
 
-                if (isLogged.value) {
+                if (canRegister && isLogged.value) {
                     val enabled = (event.currentParticipants < event.maxParticipants && !registered.value) || registered.value
                     val message = if (registered.value) R.string.withdraw else R.string.sign_up
                     GrayButton(
@@ -329,6 +343,100 @@ fun EventScreen(
                     HtmlContent(
                         HtmlData(event.longDescription)
                     )
+                }
+            }
+
+            if (participants.isNotEmpty()) {
+                Box {
+                    LazyColumn {
+                        item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.label_events_participants),
+                                    style = TextStyle(
+                                        fontSize = 16.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                    ),
+                                )
+                            }
+                        }
+                        itemsIndexed(participants) { index, participant ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Column(
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    Text(
+                                        text = participant.description,
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(
+                                        text = participant.companyName.orEmpty(),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.Gray
+                                    )
+                                }
+                                val deletedMsg = stringResource(id = R.string.deleted_participant, participant.description)
+                                val errorMsg = stringResource(id = R.string.deleting_error)
+                                Button(onClick = {
+                                    val result = onDeleteParticipant.invoke(event.id, participant.id)
+                                    if (result) {
+                                        Toast.makeText(
+                                            context,
+                                            deletedMsg,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        participants.remove(participant)
+                                    } else {
+                                        Toast.makeText(
+                                            context,
+                                            errorMsg,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }) {
+                                    Text(text = stringResource(id = R.string.label_delete))
+                                }
+                            }
+
+                            if (index < participants.lastIndex) {
+                                HorizontalDivider(
+                                    modifier = Modifier.padding(horizontal = 16.dp),
+                                    thickness = 1.dp,
+                                    color = Color.LightGray
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                Box {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.label_no_participants),
+                            style = TextStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            ),
+                        )
+                    }
                 }
             }
         }

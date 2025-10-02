@@ -21,8 +21,8 @@ android {
         applicationId = "pl.directsoftware.kkbn"
         minSdk = 27
         targetSdk = 35
-        versionCode = 101
-        versionName = "1.0.1"
+        versionCode = 110
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

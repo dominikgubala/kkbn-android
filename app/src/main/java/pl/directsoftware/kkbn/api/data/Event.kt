@@ -2,6 +2,7 @@ package pl.directsoftware.kkbn.api.data
 
 import org.json.JSONObject
 import pl.directsoftware.kkbn.common.ISerializable
+import pl.directsoftware.kkbn.utils.SessionManager
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.time.Duration
@@ -52,6 +53,12 @@ data class Event(
         return sb.toString()
     }
 
+    fun getAvailablePlaces(): String {
+        val available = maxParticipants - currentParticipants
+
+        return if (available > 0) available.toString() else "Brak"
+    }
+
     override fun serialize(): String {
         val json = JSONObject().apply {
             put("id", id)
@@ -66,6 +73,11 @@ data class Event(
             put("longDescription", longDescription)
         }
         return URLEncoder.encode(json.toString(), "UTF-8")
+    }
+
+    fun hostPrivileges(): Boolean {
+        if (host == null) return false
+        return host.email == SessionManager.identifier!!
     }
 
     companion object {

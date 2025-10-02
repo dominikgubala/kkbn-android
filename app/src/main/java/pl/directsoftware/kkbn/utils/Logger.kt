@@ -4,6 +4,8 @@ import android.util.Log
 
 class Logger(private val name: String) {
 
+    private val logName = "KKBN_LOG"
+
     enum class Level {
         DEBUG,
         INFO,
@@ -22,26 +24,26 @@ class Logger(private val name: String) {
     }
 
     fun debug(message: String?, vararg args: Any?) {
-        Log.d(name, message?.format(args) ?: "")
+        Log.d("$logName $name", message?.format(args) ?: "")
     }
 
     fun info(message: String?, vararg args: Any?) {
-        Log.i(name, message?.format(args) ?: "")
+        Log.i("$logName $name", message?.format(args) ?: "")
     }
 
     fun warning(message: String?, vararg args: Any?) {
-        Log.w(name, message?.format(args) ?: "")
+        Log.w("$logName $name", message?.format(args) ?: "")
     }
 
     fun error(message: String?, vararg args: Any?) {
-        Log.e(name, message?.format(args) ?: "")
+        Log.e("$logName $name", message?.format(args) ?: "")
     }
 
     fun methodError(method: String, error: String) {
-        Log.e(name, "Error in $method: $error")
+        Log.e("$logName $name", "Error in $method: $error")
     }
 
     fun methodException(method: String, exception: Exception) {
-        Log.e(name, "Exception in $method: ${exception.message}")
+        Log.e("$logName $name", "Exception in $method: ${exception.message}")
     }
 }

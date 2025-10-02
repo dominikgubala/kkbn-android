@@ -97,7 +97,57 @@ fun YourDataScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                if (profile.value!!.events.isNotEmpty()) {
+                if (profile.value!!.hostEvents?.isNotEmpty() == true) {
+                    DataRow(labelId = R.string.my_workshops)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Column(
+                        modifier = Modifier.padding(start = 16.dp)
+                    ) {
+                        for (event in profile.value!!.hostEvents!!) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp)
+                                    .clickable {
+                                        goToEvent(event)
+                                    }
+                            ) {
+                                Text(
+                                    text = event.title,
+                                    style = MaterialTheme.typography.bodyLarge.copy(
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                )
+                                Spacer(modifier = Modifier.height(2.dp))
+                                Text(
+                                    text = "${event.date} | ${event.dateTimeBegin} - ${event.dateTimeEnd}",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Light,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+
+                                Spacer(modifier = Modifier.height(2.dp))
+                                val participants = stringResource(id = R.string.label_participants, event.currentParticipants)
+                                val availablePlaces = stringResource(id = R.string.label_available_places, event.getAvailablePlaces())
+                                Text(
+                                    text = "$participants | $availablePlaces",
+                                    style = MaterialTheme.typography.bodyMedium.copy(
+                                        fontWeight = FontWeight.Light,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                if (profile.value!!.events?.isNotEmpty() == true) {
                     DataRow(labelId = R.string.workshops)
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -105,7 +155,7 @@ fun YourDataScreen(
                     Column(
                         modifier = Modifier.padding(start = 16.dp)
                     ) {
-                        for (event in profile.value!!.events) {
+                        for (event in profile.value!!.events!!) {
                             Column(
                                 modifier = Modifier
                                     .fillMaxWidth()

@@ -1,7 +1,9 @@
 package pl.directsoftware.kkbn.api.http
 
+import pl.directsoftware.kkbn.api.data.BooleanValue
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.api.data.EventParticipant
 import pl.directsoftware.kkbn.api.data.Profile
 import pl.directsoftware.kkbn.api.response.Response
 import retrofit2.http.Field
@@ -9,6 +11,7 @@ import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiPrivateService {
 
@@ -35,11 +38,17 @@ interface ApiPrivateService {
         @Field("maxParticipants") maxParticipants: Int,
     ): Response<Event?>
 
+    @GET("events/{id}/participants")
+    suspend fun getEventParticipants(
+        @Path("id") id: Int
+    ): Response<List<EventParticipant>?>
+
     @FormUrlEncoded
     @POST("events/{id}/register")
     suspend fun registerParticipant(
         @Path("id") id: Int,
         @Field("memberId") memberId: Int,
+        @Field("memberTypeId") memberTypeId: Int,
     ): Response<Event?>
 
     @FormUrlEncoded
@@ -47,7 +56,14 @@ interface ApiPrivateService {
     suspend fun unregisterParticipant(
         @Path("id") id: Int,
         @Field("memberId") memberId: Int,
+        @Field("memberTypeId") memberTypeId: Int,
     ): Response<Event?>
+
+    @POST("events/{eventId}/{participantId}/unregister")
+    suspend fun unregisterParticipant(
+        @Path("eventId") eventId: Int,
+        @Path("participantId") participantId: Int,
+    ): Response<BooleanValue?>
 
     @FormUrlEncoded
     @POST("event-hosts/{id}")
@@ -69,5 +85,7 @@ interface ApiPrivateService {
     ): Response<Map<String,Boolean>>
 
     @GET("profile")
-    suspend fun getProfile(): Response<Profile>
+    suspend fun getProfile(
+        @Query("token") token: String
+    ): Response<Profile>
 }

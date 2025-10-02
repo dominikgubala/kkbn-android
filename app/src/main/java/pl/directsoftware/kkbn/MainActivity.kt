@@ -11,12 +11,13 @@ import pl.directsoftware.kkbn.ui.theme.MainScreen
 import pl.directsoftware.kkbn.utils.Logger
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: AppViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        logger.debug("onCreate")
         super.onCreate(savedInstanceState)
 
         ApiClient.cacheDir = this.cacheDir
-        val viewModel: AppViewModel by viewModels()
 
         enableEdgeToEdge()
         setContent {

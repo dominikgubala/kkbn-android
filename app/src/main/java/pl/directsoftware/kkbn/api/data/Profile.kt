@@ -6,5 +6,6 @@ data class Profile(
     val lastName: String?,
     val companyName: String?,
     val active: Boolean,
-    val events: List<Event>,
+    val events: List<Event>?,
+    val hostEvents: List<Event>?,
 )

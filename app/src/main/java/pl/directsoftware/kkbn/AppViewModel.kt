@@ -15,6 +15,7 @@ import pl.directsoftware.kkbn.api.data.Download
 import pl.directsoftware.kkbn.api.data.Event
 import pl.directsoftware.kkbn.api.data.EventDay
 import pl.directsoftware.kkbn.api.data.EventHost
+import pl.directsoftware.kkbn.api.data.EventParticipant
 import pl.directsoftware.kkbn.api.data.Exhibitor
 import pl.directsoftware.kkbn.api.data.News
 import pl.directsoftware.kkbn.api.data.Partner
@@ -56,6 +57,7 @@ class AppViewModel @Inject constructor(
 
     init {
         try {
+            Settings.generateSessionToken()
             val bearerToken = runBlocking { Settings.readString(Setting.BEARER_TOKEN) }
             if (!bearerToken.isNullOrEmpty()) {
                 logger.info("Bearer token exists, attempting to connect to secured API.")
@@ -115,6 +117,7 @@ class AppViewModel @Inject constructor(
             Settings.writeString(Setting.BEARER_TOKEN, "")
             Settings.writeInt(Setting.MEMBER_TYPE, EventMemberType.ANONYMOUS.code)
             Settings.writeInt(Setting.MEMBER_ID, -1)
+            Settings.generateSessionToken()
             SessionManager.destroy()
             ApiPrivateClient.init(null)
         }
@@ -210,13 +213,7 @@ class AppViewModel @Inject constructor(
 
     suspend fun getDownloads(): List<Download>? {
         try {
-            val d = DownloadRepository.getDownloads()
-            if (d != null) {
-                for (download in d) {
-                    logger.debug("plik ${download.name}, typ: ${download.type}")
-                }
-            }
-            return d
+            return DownloadRepository.getDownloads()
         } catch (e: Exception) {
             logger.methodException("getDownloads", e)
         }
@@ -273,6 +270,15 @@ class AppViewModel @Inject constructor(
         return null
     }
 
+    fun getEventParticipants(eventId: Int): List<EventParticipant>? {
+        try {
+            return EventMemberRepository.getEventParticipants(eventId)
+        } catch (e: Exception) {
+            logger.methodException("getEventParticipants", e)
+        }
+        return null
+    }
+
     fun updateEvent(
         event: Event
     ): Event? {
@@ -282,15 +288,24 @@ class AppViewModel @Inject constructor(
     fun registerParticipant(
         eventId: Int,
         memberId: Int,
+        memberType: EventMemberType,
     ): Event? {
-        return EventRepository.registerParticipant(eventId, memberId)
+        return EventRepository.registerParticipant(eventId, memberId, memberType)
     }
 
     fun unregisterParticipant(
         eventId: Int,
         memberId: Int,
+        memberType: EventMemberType,
     ): Event? {
-        return EventRepository.unregisterParticipant(eventId, memberId)
+        return EventRepository.unregisterParticipant(eventId, memberId, memberType)
+    }
+
+    fun unregisterParticipant(
+        eventId: Int,
+        participantId: Int,
+    ): Boolean {
+        return EventRepository.unregisterParticipantAsHost(eventId, participantId)
     }
 
     suspend fun isParticipantRegistered(eventId: Int): Boolean {

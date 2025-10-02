@@ -23,6 +23,11 @@
     <string name="visit_exhibitor_site">Odwiedź stronę wystawcy</string>
     <string name="choose_date">Wybierz datę</string>
     <string name="label_host">Prowadzący: </string>
+    <string name="label_participants">Uczestnicy: %d</string>
+    <string name="label_events_participants">Uczestnicy:</string>
+    <string name="label_no_participants">Brak uczestników</string>
+    <string name="label_available_places">Dostępne miejsca: %s</string>
+    <string name="label_delete">Usuń</string>
     <string name="available_places">Dostępne miejsca: %d/%d</string>
     <string name="sign_up">Zapisz się</string>
     <string name="signed_up">Zapisano</string>
@@ -51,8 +56,11 @@
     <string name="full_name">Imię i nazwisko</string>
     <string name="company">Firma</string>
     <string name="workshops">Warsztaty</string>
+    <string name="my_workshops">Moje warsztaty</string>
 
     <string name="saved_successfully">Zapisano pomyślnie</string>
     <string name="save_error">Wystąpił błąd podczas zapisywania. Proszę spróbować ponownie</string>
+    <string name="deleted_participant">Usunięto %s</string>
+    <string name="deleting_error">Błąd podczas usuwania</string>
 
 </resources>
