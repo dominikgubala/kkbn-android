@@ -21,8 +21,8 @@ android {
         applicationId = "pl.directsoftware.kkbn"
         minSdk = 27
         targetSdk = 35
-        versionCode = 110
-        versionName = "1.1.0"
+        versionCode = 120
+        versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -93,4 +93,5 @@ dependencies {
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.hilt.navigation.fragment)
+    implementation(libs.accompanist.systemuicontroller)
 }

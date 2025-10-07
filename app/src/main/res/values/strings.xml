@@ -57,6 +57,7 @@
     <string name="company">Company</string>
     <string name="workshops">Workshops</string>
     <string name="my_workshops">My workshops</string>
+    <string name="participation">Participation</string>
 
     <string name="saved_successfully">Saved successfully</string>
     <string name="save_error">An error occurred while saving. Please try again</string>

@@ -7,7 +7,9 @@ import java.util.Locale
 data class EventDay(
     val id: Int,
     val date: String,
+    val description: String,
     val events: List<Event>,
+    val hideDate: Boolean,
 ) {
     override fun toString(): String {
         return date

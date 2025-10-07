@@ -90,7 +90,7 @@ fun AgendaScreen(
                 onExpandedChange = { expanded = !expanded }
             ) {
                 TextField(
-                    value = selectedFilter.getFormattedDate(),
+                    value = selectedFilter.description,
                     onValueChange = {},
                     readOnly = true,
                     label = { Text(stringResource(R.string.choose_date)) },
@@ -107,7 +107,7 @@ fun AgendaScreen(
                 ) {
                     events.value!!.forEach { event ->
                         DropdownMenuItem(
-                            text = { Text(event.getFormattedDate()) },
+                            text = { Text(event.description) },
                             onClick = {
                                 selectedFilter = event
                                 expanded = false
@@ -346,7 +346,7 @@ fun EventScreen(
                 }
             }
 
-            if (participants.isNotEmpty()) {
+            if (isLogged.value && event.host != null && event.host.email == SessionManager.identifier && participants.isNotEmpty()) {
                 Box {
                     LazyColumn {
                         item {

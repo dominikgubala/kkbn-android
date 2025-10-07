@@ -1,13 +1,16 @@
 package pl.directsoftware.kkbn
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import pl.directsoftware.kkbn.api.ApiClient
 import pl.directsoftware.kkbn.ui.theme.KKBNTheme
 import pl.directsoftware.kkbn.ui.theme.MainScreen
+import pl.directsoftware.kkbn.ui.theme.SetSystemBars
 import pl.directsoftware.kkbn.utils.Logger
 
 class MainActivity : ComponentActivity() {
@@ -19,9 +22,11 @@ class MainActivity : ComponentActivity() {
 
         ApiClient.cacheDir = this.cacheDir
 
-        enableEdgeToEdge()
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             KKBNTheme {
+                SetSystemBars()
                 MainScreen(viewModel)
             }
         }

@@ -57,6 +57,7 @@
     <string name="company">Firma</string>
     <string name="workshops">Warsztaty</string>
     <string name="my_workshops">Moje warsztaty</string>
+    <string name="participation">Uczestnictwo</string>
 
     <string name="saved_successfully">Zapisano pomyślnie</string>
     <string name="save_error">Wystąpił błąd podczas zapisywania. Proszę spróbować ponownie</string>
