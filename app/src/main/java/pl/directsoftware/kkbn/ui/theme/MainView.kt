@@ -369,7 +369,7 @@ fun GoToRoute(
             onOpen = { url ->
                 val intent = Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse("https://kkbn.pl/${url}")
+                    Uri.parse("https://kkbn-bkp.simptestcert.pl/${url}")
                 )
                 context.startActivity(intent)
             }

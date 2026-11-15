@@ -11,7 +11,7 @@ import java.io.File
 
 object ApiClient {
 
-    const val BASE_URL = "https://kkbn.pl/api/"
+    const val BASE_URL = "https://kkbn-bkp.simptestcert.pl/api/"
     const val BASE_TOKEN = "cHVibGljQHJlcXVlc3QucGxeRkZGRkZGXi0x"
     private const val CACHE_SIZE = 10L * 1024 * 1024
 

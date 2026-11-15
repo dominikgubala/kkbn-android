@@ -156,7 +156,7 @@ fun PlaceScreen(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     Button(onClick = {
-                        onOpen("https://kkbn.pl/uploads/PLAN%20HOTELU.pdf")
+                        onOpen("https://kkbn-bkp.simptestcert.pl/uploads/PLAN%20HOTELU.pdf")
                     }) {
                         Icon(
                             imageVector = Icons.Default.Map,

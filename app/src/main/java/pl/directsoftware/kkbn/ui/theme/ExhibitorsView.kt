@@ -74,7 +74,7 @@ fun ExhibitorsScreen(
                                     clip = true
                                 )
                             ,
-                            model = "https://kkbn.pl/${exhibitor.avatar}",
+                            model = "https://kkbn-bkp.simptestcert.pl/${exhibitor.avatar}",
                             contentDescription = null,
                         )
                     }
@@ -97,7 +97,7 @@ fun ExhibitorScreen(exhibitor: Exhibitor) {
             modifier = Modifier
                 .padding(4.dp)
             ,
-            model = "https://kkbn.pl/${exhibitor.avatar}",
+            model = "https://kkbn-bkp.simptestcert.pl/${exhibitor.avatar}",
             contentDescription = null,
         )
         Spacer(modifier = Modifier.height(4.dp))

@@ -75,7 +75,7 @@ fun PartnersScreen(
                                     clip = true
                                 )
                             ,
-                            model = "https://kkbn.pl/${partner.avatar}",
+                            model = "https://kkbn-bkp.simptestcert.pl/${partner.avatar}",
                             contentDescription = null,
                         )
                     }
@@ -98,7 +98,7 @@ fun PartnerScreen(partner: Partner) {
             modifier = Modifier
                 .padding(4.dp)
             ,
-            model = "https://kkbn.pl/${partner.avatar}",
+            model = "https://kkbn-bkp.simptestcert.pl/${partner.avatar}",
             contentDescription = null,
         )
         Spacer(modifier = Modifier.height(4.dp))

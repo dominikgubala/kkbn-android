@@ -137,7 +137,7 @@ class AppViewModel @Inject constructor(
         try {
             val newsList = NewsRepository.getNews()
             newsList?.forEach { news ->
-                news.bitmap = loadImageFromUrl("https://kkbn.pl/${news.imagePath}")
+                news.bitmap = loadImageFromUrl("https://kkbn-bkp.simptestcert.pl/${news.imagePath}")
             }
             return newsList
         } catch (e: Exception) {
@@ -194,7 +194,7 @@ class AppViewModel @Inject constructor(
     suspend fun getPlace(): Place? {
         try {
             val place = PlaceRepository.getPlace() ?: return null
-            place.bitmap = loadImageFromUrl("https://kkbn.pl/${place.image}")
+            place.bitmap = loadImageFromUrl("https://kkbn-bkp.simptestcert.pl/${place.image}")
             return place
         } catch (e: Exception) {
             logger.methodException("getPlace", e)

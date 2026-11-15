@@ -36,7 +36,7 @@ fun CommitteeScreen(
         committeeResource?.forEach{ committee ->
             avatarList[committee] =
                 if (committee.avatar != null)
-                    loadImageFromUrl("https://kkbn.pl/${committee.avatar}")
+                    loadImageFromUrl("https://kkbn-bkp.simptestcert.pl/${committee.avatar}")
                 else null
         }
         isLoading.value = false

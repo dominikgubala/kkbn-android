@@ -10,7 +10,7 @@ android {
 
     signingConfigs {
         create("kkbn") {
-            storeFile = file("D:\\!_DG\\!_Direct_Software\\android_app.jks")
+            storeFile = file("${System.getProperty("user.home")}/.android/keystores/android_app.jks")
             storePassword = "42OYXh2W08Spwduc"
             keyPassword = "jW4NfgqSwNkU3021"
             keyAlias = "kkbn"

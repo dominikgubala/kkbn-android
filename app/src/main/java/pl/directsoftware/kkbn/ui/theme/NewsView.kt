@@ -116,7 +116,7 @@ fun NewsByIdScreen(
 
         for ((index, _) in htmlData.parts.withIndex()) {
             if (index < htmlData.matches.size) {
-                urlList[index] = "https://kkbn.pl/${htmlData.matches[index]}"
+                urlList[index] = "https://kkbn-bkp.simptestcert.pl/${htmlData.matches[index]}"
             }
         }
 
