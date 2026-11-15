@@ -5,6 +5,7 @@ Oficjalna aplikacja na Androida dla uczestników **Krajowej Konferencji Badań N
 <a href="https://play.google.com/store/apps/details?id=pl.directsoftware.kkbn">
   <img alt="Pobierz z Google Play" height="60" src="https://play.google.com/intl/en_us/badges/static/images/badges/pl_badge_web_generic.png">
 </a>
+
 ## Funkcje
 
 **Dla wszystkich użytkowników**
