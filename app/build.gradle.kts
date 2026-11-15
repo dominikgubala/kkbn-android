@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "pl.directsoftware.kkbn"
-    compileSdk = 35
+    compileSdk = 36
 
     signingConfigs {
         create("kkbn") {
@@ -20,7 +20,7 @@ android {
     defaultConfig {
         applicationId = "pl.directsoftware.kkbn"
         minSdk = 27
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 121
         versionName = "1.2.1"
 
